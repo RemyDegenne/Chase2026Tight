@@ -3,14 +3,17 @@
 
 \begin{lemma}[General lower bound, all $n$]
   \label{lem:many_batches_general}
-  \uses{lem:two_batch_general}
+  \lean{Chase2026Tight.ofReal_le_lintegral_stoppingTime}
+  \leanok
+  \uses{lem:two_batch_general, lem:pulls_le_rounds}
   Let $n \ge 1$, $0 < \eps \le 0.1$ and $A'$ a good SBI algorithm. Then
   $T(A', S_0) \ge k \frac{\ln(1 + n/8)}{8\eps^2}$.
 \end{lemma}
 
 \begin{proof}
-  The number of rounds $\tau$ is at least $\sum_{u \in [k]} N_u(\tau)$; sum
-  Lemma~\ref{lem:two_batch_general} over the $k$ batches.
+  \leanok
+  The number of rounds $\tau$ is at least $\sum_{u \in [k]} N_u(\tau)$
+  (Lemma~\ref{lem:pulls_le_rounds}); sum Lemma~\ref{lem:two_batch_general} over the $k$ batches.
 \end{proof}
 
 \begin{lemma}[Lower bound for the general SBI game, Lemma 5.1]
@@ -23,6 +26,7 @@
 \end{lemma}
 
 \begin{proof}
+  \leanok
   $\ln(n/10) \le \ln(1 + n/8)$ and $1/20 \le 1/8$; Lemma~\ref{lem:many_batches_general}.
 \end{proof}
 

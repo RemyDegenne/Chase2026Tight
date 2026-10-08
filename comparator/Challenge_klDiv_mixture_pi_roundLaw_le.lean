@@ -38,6 +38,8 @@ public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
 public import Mathlib.Geometry.Convex.ConvexSpace.CompactSpaceStdSimplex
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 public import Mathlib.InformationTheory.KullbackLeibler.Basic
+public import Mathlib.MeasureTheory.Integral.Pi
+public import Mathlib.Probability.Kernel.Composition.WithDensity
 
 /-! # Standalone extraction for `Chase2026Tight.klDiv_mixture_pi_roundLaw_le`
 Definitions are copied verbatim; theorem proofs are replaced by `sorry`.
@@ -58,8 +60,12 @@ namespace Learning
 end Learning
 namespace Bandits
 end Bandits
+namespace ENNReal
+end ENNReal
 namespace Chase2026Tight
 end Chase2026Tight
+namespace InformationTheory
+end InformationTheory
 
 -- ═══ Chase2026Tight.CIM2026.Setting ═══
 @[expose] public section
@@ -180,9 +186,12 @@ open MeasureTheory ProbabilityTheory InformationTheory Learning Bandits
 open scoped ENNReal
 namespace Chase2026Tight
 
+set_option linter.unusedVariables false in
 /-- **Lemma 4.1** (Chase, Ito, Mehalel 2026; Ito et al. 2024). In the two-batch game (`k = 1`),
 for `0 < ε ≤ 0.1`, `T ≥ 1` and `n ≥ 1`,
-`KL((1/n) ∑_v P_(1, v)^T ‖ P_0^T) ≤ ((1 + 4 ε²)^T - 1) / n`. -/
+`KL((1/n) ∑_v P_(1, v)^T ‖ P_0^T) ≤ ((1 + 4 ε²)^T - 1) / n`. The hypothesis `T ≥ 1` of the paper
+is not needed (the bound holds for `T = 0`); it is kept in the statement, as in the paper. -/
+@[nolint unusedArguments]
 theorem klDiv_mixture_pi_roundLaw_le {n : ℕ} (hn : 1 ≤ n) {ε : ℝ} (hε : ε ∈ Set.Ioc 0 0.1)
     {T : ℕ} (hT : 1 ≤ T) :
     klDiv ((n : ℝ≥0∞)⁻¹ • ∑ v : Fin n, Measure.pi fun _ : Fin T ↦ roundLaw ε (Expert.mk 0 v))

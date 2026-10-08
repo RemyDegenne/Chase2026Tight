@@ -5,68 +5,136 @@ Throughout, $0 < \eps \le 0.1$, and $u^\star$ and $j^\star$ denote the special b
 \emph{special expert} of the strategy $S_\theta$: $j^\star = \theta$ (expert $0$ for $S_0$).
 $N_u(T)$ is the number of rounds $t < T$ in which an arm of batch $u$ is pulled.
 
+The lemmas of this chapter are formalized on the general arm and expert types of
+Chapter~\ref{chap:main} (\texttt{strategyOn}, Definition~\ref{def:embedding}): an arm $a$ is in
+the batch of its reduction $\sigma(a)$, and the special expert is $\tau'(\theta)$.
+
 \begin{lemma}[Conditional law of the losses]
   \label{lem:loss_law_cond}
+  \lean{Chase2026Tight.hasCondDistrib_feedback_strategyOn, Chase2026Tight.lossKernelOn}
+  \leanok
   \uses{def:strategy, lem:feedback_ignores_action_cond}
   In a run of a learner against $S_\theta$, the loss vector of round $t$ has conditional law
-  $\texttt{lossLaw ε θ}(e_t)$ given the history of the previous rounds, the advice $e_t$ and the
-  arm $I_t$ of round $t$.
+  $\texttt{lossLaw ε θ}(e_t)$ given the advice $e_t$ and the arm $I_t$ of round $t$ (and also given
+  the history of the previous rounds, the advice and the arm, by definition of a run).
 \end{lemma}
 
 \begin{proof}
-  The feedback kernel of $S_\theta$ is the loss kernel applied to the advice of the round;
-  Lemma~\ref{lem:feedback_ignores_action_cond}.
+  \leanok
+  The feedback kernel of $S_\theta$ is the loss kernel applied to the advice of the round, a
+  function of the advice and the arm; Lemma~\ref{lem:feedback_ignores_action_cond}.
+\end{proof}
+
+\begin{lemma}[Expected losses given the advice]
+  \label{lem:mean_loss}
+  \lean{Chase2026Tight.meanLoss, Chase2026Tight.meanLoss_zero,
+    Chase2026Tight.meanLoss_ofBatch_of_ne, Chase2026Tight.meanLoss_mk_ofBatch,
+    Chase2026Tight.meanLoss_sub_meanLoss_adviceOf_ge}
+  \leanok
+  \uses{def:strategy}
+  Let $0 \le \eps \le 1/2$ and let the advice $e$ be given by advice bits. Under
+  $\texttt{lossLaw ε θ}(e)$, the expected loss of arm $0$ is $1/2 - \eps/2$, of an arm of a batch
+  other than $u^\star$ it is $1/2$, and of the arm $(u, b)$ of the special batch of $S_{(u, v)}$ it
+  is $1/2 - \eps$ if $(u, v)$ advises $(u, b)$ and $1/2 + \eps$ otherwise. Hence the expected loss
+  of every arm $a$ exceeds the expected loss of the arm $e(j^\star)$ advised by the special expert
+  by at least $\eps/2$ if $a \notin u^\star$, and by at least $0$ otherwise.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  The loss of arm $0$ is a $\mathrm{Ber}(1/2 - \eps/2)$ bit; the correct arm of a batch other than
+  the special batch is a uniform bit; the arm advised by $(u, v)$ is incorrect with probability
+  $1/2 - \eps$ under $S_{(u,v)}$. The advice of $j^\star$ is arm $0$ for $S_0$ and an arm of batch
+  $u$ for $S_{(u, v)}$; compare the five cases.
 \end{proof}
 
 \begin{lemma}[Per-round regret]
   \label{lem:per_round_regret}
-  \uses{lem:loss_law_cond}
+  \lean{Chase2026Tight.mul_measureReal_batch_ne_le_integral, Chase2026Tight.strategyOn_obsIn}
+  \leanok
+  \uses{lem:loss_law_cond, lem:mean_loss}
   In a run against $S_\theta$, for every round $t$,
   $\E[\ell_t(I_t) - \ell_t(e_t(j^\star))] \ge \frac{\eps}{2} \Prob(I_t \notin u^\star)$.
 \end{lemma}
 
 \begin{proof}
-  Condition on the past, the advice and the arm (Lemma~\ref{lem:loss_law_cond}). The expected loss
-  of the arm advised by $j^\star$ is $1/2 - \eps$ (resp.\ $1/2 - \eps/2$ for $S_0$). The expected
-  loss of an arm of a batch other than $u^\star$ is $1/2$, of arm $0$ is $1/2 - \eps/2$, and of an
-  arm of batch $u^\star$ is $1/2 \pm \eps$ (resp.\ $1/2$), whatever the advice.
+  \leanok
+  Condition on the advice and the arm (Lemma~\ref{lem:loss_law_cond}): the expectation is that of
+  the difference of the expected losses of $I_t$ and of $e_t(j^\star)$ given the advice. The advice
+  is almost surely given by advice bits (it is drawn by \texttt{adviceOf} from uniform bits), and
+  Lemma~\ref{lem:mean_loss} bounds this difference from below by $\frac{\eps}{2}
+  \mathbf{1}\{I_t \notin u^\star\}$.
 \end{proof}
 
 \begin{lemma}[Regret and pulls of the special batch]
   \label{lem:regret_ge_pulls}
+  \lean{Chase2026Tight.mul_sub_integral_pullCount_le_expertPseudoRegret,
+    Chase2026Tight.integral_pullCount_history}
+  \leanok
   \uses{lem:per_round_regret, def:pseudo_regret}
   In a run against $S_\theta$, $R_T \ge \frac{\eps}{2} \E[T - N_{u^\star}(T)]$.
 \end{lemma}
 
 \begin{proof}
-  The pseudo-regret is at least the expected regret against $j^\star$; sum
-  Lemma~\ref{lem:per_round_regret} over $t < T$.
+  \leanok
+  The pseudo-regret is at least the expected regret against $j^\star$ (the losses are in
+  $\{0, 1\}$, hence integrable); sum Lemma~\ref{lem:per_round_regret} over $t < T$, using
+  $\E[N_{u^\star}(T)] = \sum_{t < T} \Prob(I_t \in u^\star)$.
 \end{proof}
 
 \begin{definition}[The SBI algorithm of a learner]
   \label{def:sbi_of_learner}
+  \lean{Chase2026Tight.sbiOfLearner, Chase2026Tight.mostPulledBatch}
+  \leanok
   \uses{def:sbi}
   Given a learner $A$ and $T^\star \in \N$, the SBI algorithm $A'$ runs $A$ (with bandit feedback)
-  for $T^\star$ rounds, then outputs the most pulled batch
-  $\argmax_{u} N_u(T^\star)$ (ties broken by a fixed order).
+  for $T^\star$ rounds, then outputs a most pulled batch, an element of
+  $\argmax_{u} N_u(T^\star)$ (a fixed choice among the maximizers).
 \end{definition}
+
+\begin{lemma}[Runs of the SBI algorithm of a learner]
+  \label{lem:sbi_of_learner_run}
+  \lean{Chase2026Tight.stoppingTime_sbiOfLearner, Chase2026Tight.isRun_sbiOfLearner,
+    Chase2026Tight.mostPulledBatch_eq}
+  \leanok
+  \uses{def:sbi_of_learner}
+  The SBI algorithm $A'$ of Definition~\ref{def:sbi_of_learner} stops after $T^\star$ rounds.
+  Every run of the learner $A$, with output the most pulled batch in the first $T^\star$ rounds, is
+  a run of $A'$. A batch pulled in more than half of the $T^\star$ rounds is the most pulled batch.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  The stopping rule is ``the history has length $T^\star$'' and the output rule is deterministic.
+  Two distinct batches are pulled in disjoint sets of rounds, so if $N_u(T^\star) > T^\star/2$
+  every other batch has fewer pulls than $u$.
+\end{proof}
 
 \begin{lemma}[Reduction, Lemma 3.1]
   \label{lem:reduction}
-  \lean{Chase2026Tight.exists_isGood_expectedRounds_le}
+  \lean{Chase2026Tight.exists_isGood_expectedRounds_le,
+    Chase2026Tight.exists_isGoodOn_lintegral_stoppingTime_le}
   \leanok
-  \uses{def:is_good, def:pseudo_regret, def:sbi_of_learner, lem:regret_ge_pulls}
+  \uses{def:is_good, def:pseudo_regret, def:sbi_of_learner, lem:sbi_of_learner_run,
+    lem:regret_ge_pulls, lem:exists_run_universe}
   Let $A$ be a learner whose pseudo-regret under every strategy of the pool is at most $r(T)$ after
   $T$ rounds, for all $T$, and let $T^\star \ge 1$ with $T^\star \ge 1000\, r(T^\star)/\eps$. Then
   there is a good SBI algorithm $A'$ with $T(A', S) \le T^\star$ for every strategy $S$ of the pool.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   Take $A'$ of Definition~\ref{def:sbi_of_learner}: it stops at $T^\star$, and its runs are runs of
-  $A$. By Markov's inequality and Lemma~\ref{lem:regret_ge_pulls},
-  $\Prob(N_{u^\star}(T^\star) < \frac34 T^\star) \le \frac{4\, \E[T^\star - N_{u^\star}(T^\star)]}{T^\star}
-  \le \frac{8\, r(T^\star)}{\eps T^\star} \le 0.008$, and $N_{u^\star}(T^\star) \ge \frac34 T^\star
-  > \frac{T^\star}{2}$ makes $u^\star$ the unique most pulled batch.
+  $A$ (Lemma~\ref{lem:sbi_of_learner_run}). The law of its output under $S_\theta$ can be computed
+  on any run; take a run of $A$ on a probability space in the universe of the regret hypothesis
+  (Lemma~\ref{lem:exists_run_universe}). By Markov's inequality and
+  Lemma~\ref{lem:regret_ge_pulls},
+  $\Prob(N_{u^\star}(T^\star) \le \frac12 T^\star)
+  \le \frac{2\, \E[T^\star - N_{u^\star}(T^\star)]}{T^\star}
+  \le \frac{4\, r(T^\star)}{\eps T^\star} \le 0.004$, and $N_{u^\star}(T^\star) > \frac{T^\star}{2}$
+  makes $u^\star$ the most pulled batch (Lemma~\ref{lem:sbi_of_learner_run}). The general form,
+  on general arm and expert types, is proved in the same way; the paper's form is the case of the
+  identity maps.
 \end{proof}
 
 \begin{remark}

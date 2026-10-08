@@ -4,8 +4,10 @@ Machine-checkable verification, with [leanprover/comparator](https://github.com/
 that this repository proves the headline results claimed in [`formalization.yaml`](../formalization.yaml)
 without having to read or trust the Lean development in `Chase2026Tight/`.
 
-**Status.** Phase 1 (2026-10-08): the 5 headline results are stated with `sorry`; the challenges
-compile (`lake build Comparator`). They freeze the statements: phase 2 must prove exactly them.
+**Status.** Phase 2 complete (2026-10-08): the project proves the 5 headline theorems with no
+`sorry` and the standard axioms only; the challenges, regenerated after phase 2, compile
+(`lake build Comparator`). The full comparator run (`scripts/comparator-verify.sh`) remains to be
+done.
 
 Each challenge is one self-contained file whose transitive imports resolve to Mathlib and Lean
 core only, the shape the [Palomar registry](https://palomar-registry.org/) enforces: no LML, no

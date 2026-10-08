@@ -1,50 +1,125 @@
 \chapter{Information theory}
 \label{chap:prereq_information}
 
-\begin{lemma}[KL divergence of a mixture]
-  \label{lem:klDiv_mixture_le}
-  Let $P_1, \dots, P_n$ and $Q$ be probability measures with $P_i \ll Q$, and $w_1, \dots, w_n \ge 0$
-  weights with $\sum_i w_i = 1$. Then
-  $\KL\big(\sum_i w_i P_i \,\big\|\, Q\big) \le \sum_i w_i \log\Big(\sum_j w_j \int \frac{dP_j}{dQ}
-  \, dP_i\Big)$.
+\begin{lemma}[KL divergence and $\chi^2$ divergence]
+  \label{lem:klDiv_le_chiSq}
+  \lean{InformationTheory.klDiv_le_lintegral_rnDeriv_sq_sub_one,
+    InformationTheory.klFun_le_sq_sub_one, InformationTheory.klDiv_withDensity_le}
+  \leanok
+  For probability measures $\mu \ll \nu$,
+  $\KL(\mu \| \nu) \le \int \big(\frac{d\mu}{d\nu}\big)^2 d\nu - 1$ (the $\chi^2$ divergence). In
+  particular, for a probability density $f$ with respect to $\nu$,
+  $\KL(f \cdot \nu \| \nu) \le \int f^2 \, d\nu - 1$.
 \end{lemma}
 
 \begin{proof}
-  With $M = \sum_j w_j P_j$, $\frac{dM}{dQ} = \sum_j w_j \frac{dP_j}{dQ}$ and
-  $\KL(M \| Q) = \sum_i w_i \int \log \frac{dM}{dQ} \, dP_i$. Apply Jensen's inequality to the
-  concave function $\log$ under each $P_i$.
+  \leanok
+  With $g = \frac{d\mu}{d\nu}$, $\KL(\mu \| \nu) = \int \phi(g) \, d\nu$ for
+  $\phi(x) = x \log x + 1 - x$ (Mathlib's \texttt{klDiv\_eq\_lintegral\_klFun\_of\_ac}). Since
+  $\log x \le x - 1$, $\phi(x) \le x(x - 1) + 1 - x = (x - 1)^2$ for $x \ge 0$, and
+  $\int (g - 1)^2 \, d\nu = \int g^2 \, d\nu - 2 \int g \, d\nu + 1 = \int g^2 \, d\nu - 1$.
+  For $\mu = f \cdot \nu$, $g = f$ $\nu$-almost everywhere.
 \end{proof}
+
+\begin{lemma}[KL divergence of a mixture]
+  \label{lem:klDiv_mixture_le}
+  \lean{InformationTheory.klDiv_sum_smul_withDensity_le, MeasureTheory.finsetSum_smul_withDensity}
+  \leanok
+  \uses{lem:klDiv_le_chiSq}
+  Let $Q$ be a probability measure, $P_i = f_i \cdot Q$ ($i \in I$, $I$ finite) probability
+  measures with densities $f_i = \frac{dP_i}{dQ}$ with respect to $Q$, and $(w_i)_{i \in I}$
+  nonnegative weights with $\sum_i w_i = 1$. Then
+  $\KL\big(\sum_i w_i P_i \,\big\|\, Q\big) \le \sum_i \sum_j w_i w_j \int \frac{dP_j}{dQ} \, dP_i
+  - 1$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  The mixture $M = \sum_j w_j P_j$ has density $\frac{dM}{dQ} = \sum_j w_j f_j$ with respect to
+  $Q$. By Lemma~\ref{lem:klDiv_le_chiSq},
+  $\KL(M \| Q) \le \int \big(\sum_j w_j f_j\big)^2 dQ - 1
+  = \sum_{i, j} w_i w_j \int f_i f_j \, dQ - 1$, and $\int f_i f_j \, dQ = \int f_j \, dP_i$.
+\end{proof}
+
+\begin{remark}
+  The paper bounds $\KL(M \| Q) = \sum_i w_i \int \log \frac{dM}{dQ} \, dP_i$ by Jensen's
+  inequality for the concave $\log$, giving
+  $\sum_i w_i \log\big(\sum_j w_j \int \frac{dP_j}{dQ} \, dP_i\big)$, then uses
+  $\log(1 + x) \le x$. By concavity of $\log$ and $\log y \le y - 1$, that bound is at most the
+  one of Lemma~\ref{lem:klDiv_mixture_le}, and both give the same final bound in
+  Lemma~\ref{lem:kl_bound}; the $\chi^2$ form avoids the integrability conditions of the
+  logarithms.
+\end{remark}
 
 \begin{lemma}[Products of measures with densities]
   \label{lem:pi_withDensity}
-  For finite measures $Q$ and measurable $f \ge 0$, the product of $T$ copies of
-  $Q.\mathrm{withDensity}(f)$ is $Q^T.\mathrm{withDensity}\big(g \mapsto \prod_{t < T} f(g_t)\big)$.
+  \lean{MeasureTheory.Measure.pi_withDensity, MeasureTheory.lintegral_fintype_prod_eq_prod}
+  \leanok
+  For $\sigma$-finite measures $Q_t$ and measurable $f_t \ge 0$ ($t$ in a finite set) such that the
+  measures $f_t \cdot Q_t$ are $\sigma$-finite, $\prod_t (f_t \cdot Q_t)
+  = \big(g \mapsto \prod_t f_t(g_t)\big) \cdot \prod_t Q_t$. In particular, the product of $T$
+  copies of $f \cdot Q$ is $\big(g \mapsto \prod_{t < T} f(g_t)\big) \cdot Q^T$.
 \end{lemma}
 
 \begin{proof}
-  Both measures agree on boxes; uniqueness of product measures.
+  \leanok
+  By Tonelli's theorem, the integral of $g \mapsto \prod_t h_t(g_t)$ under $\prod_t Q_t$ is
+  $\prod_t \int h_t \, dQ_t$ for measurable $h_t \ge 0$ (induction on the number of factors).
+  Applied to $h_t = \indic_{A_t} f_t$, both measures give mass $\prod_t \int_{A_t} f_t \, dQ_t$
+  to every box $\prod_t A_t$; uniqueness of product measures.
 \end{proof}
 
 \begin{lemma}[Pinsker's inequality for Bernoulli laws]
   \label{lem:pinsker_bernoulli}
-  For $p, q \in [0, 1]$, $\kl(p, q) \ge 2 (p - q)^2$, where
+  \lean{InformationTheory.two_mul_sq_sub_le_mul_log_div_add_mul_log_div,
+    InformationTheory.two_mul_sq_sub_le_mul_log_div_add_mul_log_div_of_le}
+  \leanok
+  For $p \in [0, 1]$ and $q \in (0, 1)$, $\kl(p, q) \ge 2 (p - q)^2$, where
   $\kl(p, q) = p \log\frac{p}{q} + (1 - p) \log \frac{1 - p}{1 - q}$ is the divergence between
-  $\Ber(p)$ and $\Ber(q)$.
+  $\Ber(p)$ and $\Ber(q)$ (with $0 \log 0 = 0$). For $q \in \{0, 1\}$, $\kl(p, q) = +\infty$ unless
+  $p = q$, and the inequality holds as well.
 \end{lemma}
 
 \begin{proof}
-  For fixed $p$, $g(q) = \kl(p, q) - 2(p - q)^2$ vanishes at $q = p$ and
-  $g'(q) = \frac{q - p}{q(1 - q)} - 4(q - p)$ has the sign of $q - p$, since $q(1 - q) \le 1/4$.
+  \leanok
+  As $\kl(p, q) = \kl(1 - p, 1 - q)$, we may assume $p \le q$. The function
+  $g(t) = \kl(p, t) - 2(p - t)^2$ is continuous on $[p, q]$, vanishes at $t = p$, and for
+  $t \in (p, q)$, $g'(t) = \frac{t - p}{t(1 - t)} - 4(t - p) = \frac{(t - p)(2t - 1)^2}{t(1 - t)}
+  \ge 0$ (that is, $t(1 - t) \le 1/4$). Hence $g$ is nondecreasing on $[p, q]$ and
+  $g(q) \ge g(p) = 0$.
+\end{proof}
+
+\begin{lemma}[Divergence between the laws of an event]
+  \label{lem:kl_event_le_klDiv}
+  \lean{InformationTheory.ofReal_mul_log_div_add_mul_log_div_le_klDiv}
+  \leanok
+  For probability measures $P, Q$ and a measurable event $E$, $\kl(P(E), Q(E)) \le \KL(P \| Q)$,
+  with the convention $0 \log \frac{0}{0} = 0$ in $\kl$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  The divergence is the sum of the divergences of the restrictions of $P$ and $Q$ to $E$ and to
+  $E^c$ (LML's \texttt{klDiv\_restrict\_add\_restrict\_compl}). By Jensen's inequality (Mathlib's
+  \texttt{mul\_log\_le\_klDiv}), for finite measures $\mu, \nu$ on $\Omega$,
+  $\KL(\mu \| \nu) \ge \mu(\Omega) \log\frac{\mu(\Omega)}{\nu(\Omega)} + \nu(\Omega) - \mu(\Omega)$;
+  the sum of these bounds for the two restrictions is $\kl(P(E), Q(E))$.
 \end{proof}
 
 \begin{lemma}[Pinsker's inequality for events]
   \label{lem:pinsker_event}
-  \uses{lem:pinsker_bernoulli}
+  \uses{lem:pinsker_bernoulli, lem:kl_event_le_klDiv}
+  \lean{InformationTheory.ofReal_two_mul_sq_measureReal_sub_le_klDiv}
+  \leanok
   For probability measures $P, Q$ and a measurable event $E$,
-  $\abs{P(E) - Q(E)} \le \sqrt{\KL(P \| Q)/2}$.
+  $2 (P(E) - Q(E))^2 \le \KL(P \| Q)$, that is, $\abs{P(E) - Q(E)} \le \sqrt{\KL(P \| Q)/2}$.
 \end{lemma}
 
 \begin{proof}
-  By the data processing inequality (Mathlib's \texttt{klDiv\_map\_le}) applied to the indicator of
-  $E$, $\kl(P(E), Q(E)) \le \KL(P \| Q)$; Lemma~\ref{lem:pinsker_bernoulli}.
+  \uses{lem:pinsker_bernoulli, lem:kl_event_le_klDiv}
+  \leanok
+  If $P \not\ll Q$, $\KL(P \| Q) = +\infty$. Otherwise, if $Q(E) = 0$ then $P(E) = 0$, and if
+  $Q(E) = 1$ then $P(E^c) = 0$, so that $P(E) = 1$: in both cases the left-hand side vanishes. If
+  $Q(E) \in (0, 1)$, $2 (P(E) - Q(E))^2 \le \kl(P(E), Q(E)) \le \KL(P \| Q)$ by
+  Lemmas~\ref{lem:pinsker_bernoulli} and~\ref{lem:kl_event_le_klDiv}.
 \end{proof}

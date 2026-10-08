@@ -5,82 +5,286 @@
 
 \begin{lemma}[Feedback independent of the current action]
   \label{lem:feedback_ignores_action_cond}
+  \lean{Learning.IsAlgEnvSeq.hasCondDistrib_feedback_of_feedbackIgnoresAction,
+    Learning.IsAlgEnvSeq.hasCondDistrib_feedback_of_eq_comap}
+  \leanok
   \uses{def:protocol}
   If an environment satisfies \texttt{FeedbackIgnoresAction}, with feedback kernels
   $\kappa_t(h, o)$ depending on the history $h$ and the observation $o$ of round $t$, then in every
   run the feedback of round $t$ has conditional law $\kappa_t(H_t, O_t)$ given the history $H_t$,
-  the observation $O_t$ and the action $X_t$ of round $t$; in particular it is conditionally
-  independent of $X_t$ given $(H_t, O_t)$.
+  the observation $O_t$ and the action $X_t$ of round $t$, and also given $(H_t, O_t)$ only. More
+  generally, if the feedback kernel of round $t$ is $\kappa_t(f(H_t, O_t, X_t))$ for a measurable
+  statistic $f$, the feedback has conditional law $\kappa_t$ given $f(H_t, O_t, X_t)$.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   The conditional law of the feedback given $(H_t, O_t, X_t)$ is the feedback kernel of the
-  environment (LML's \texttt{IsAlgEnvSeq}), which factors through $(H_t, O_t)$.
+  environment (LML's \texttt{IsAlgEnvSeq}), which factors through $f$; a conditional law that
+  factors through a statistic is the conditional law given that statistic.
+\end{proof}
+
+\begin{lemma}[Runs in a given universe]
+  \label{lem:exists_run_universe}
+  \lean{Learning.IsAlgEnvSeq.congr_measurableEquiv, Learning.exists_isAlgEnvSeq_of_measurableEquiv,
+    Learning.exists_isAlgEnvSeq_of_finite}
+  \leanok
+  \uses{def:protocol}
+  Relabelling the observations, actions and feedbacks of a run along measurable equivalences gives
+  a run of the relabelled algorithm in the relabelled environment. Consequently, if the
+  observation, action and feedback spaces are measurably equivalent to spaces in a universe
+  $\mathcal{U}$, every algorithm has a run in every environment on a probability space in
+  $\mathcal{U}$; this holds in every universe for finite observations and actions and feedbacks in
+  $\R^{\mathcal{A}}$ (the bandit with expert advice on finite arm and expert types).
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  The conditional laws of the relabelled processes are the images of the kernels. Relabel the run
+  on the canonical space (Ionescu-Tulcea, LML's \texttt{trajMeasure}) of the relabelled pair, then
+  relabel it back; for finite spaces, use bijections with $\{0, \dots, m - 1\}$ lifted to
+  $\mathcal{U}$.
 \end{proof}
 
 \section{Representation of the runs by pull records}
 
-Fix $k, n$, $0 < \eps \le 0.1$ and a batch $u \in [k]$. A \emph{pull record} of batch $u$ is a
-pair $(a, c)$ of advice bits $a \in \{0,1\}^{[n]}$ of batch $u$ and a correct arm $c \in \{0, 1\}$.
+Fix $k, n$, $\eps$ and a batch $u \in [k]$. A \emph{pull record} of batch $u$ is a pair $(a, c)$ of
+advice bits $a \in \{0,1\}^{[n]}$ of batch $u$ and a correct arm $c \in \{0, 1\}$. The strategies
+compared in Lemmas 4.2 and 5.1 are $S_0$ and the $S_{(u, v)}$, $v \in [n]$; we index them by
+$w \in \{\mathrm{none}\} \cup [n]$ ($S_0$ for $w = \mathrm{none}$, $S_{(u, v)}$ for $w = v$).
 
-\begin{definition}[Law of the records]
-  \label{def:record}
-  \uses{def:strategy}
-  $\rho^u_\theta$ is the law of a record of batch $u$ under $S_\theta$: $a$ uniform and, given $a$,
-  $c$ uniform if $\theta$ is not an expert of batch $u$, and $c = a_v$ with probability
-  $1/2 + \eps$ if $\theta = (u, v)$. It is the image, by the projection on the advice and the
-  correct arm of the batch, of the law $P_{\theta'}$ of a round of the two-batch game, where
-  $\theta' = (1, v)$ if $\theta = (u, v)$ and $\theta' = 0$ otherwise.
-\end{definition}
+\subsection{Transport of runs and laws of stopped histories}
 
-\begin{lemma}[Pathwise realization of algorithms]
-  \label{lem:algorithm_realization}
-  An algorithm whose action space is finite can be run on a probability space carrying i.i.d.\
-  uniform variables $(U_t)$ independent of the environment's randomness: there are measurable maps
-  $\phi_t$ with $X_t = \phi_t(H_t, O_t, U_t)$, and likewise for the output rule of an
-  identification algorithm with a finite output space.
+\begin{lemma}[Output law with partial feedback]
+  \label{lem:partial_feedback_run}
+  \lean{Learning.IsAlgEnvSeq.partialFeedback, Learning.IdentAlg.outputMeasure_comapPartialFeedback}
+  \leanok
+  \uses{def:protocol}
+  Let an identification algorithm see only $g(o, a, y)$ of each round $(o, a, y)$ of an
+  environment $\mathcal{E}$ whose kernels read the past rounds only through $g$, and let
+  $\mathcal{E}'$ be the environment on the partial feedbacks: its observation kernels are those of
+  $\mathcal{E}$ on the histories seen through $g$, and its feedback kernel is the law of
+  $g(o, a, y)$ under the feedback kernel of $\mathcal{E}$. In every run against $\mathcal{E}$, the
+  observations, actions and partial feedbacks form a run against $\mathcal{E}'$, and the output of
+  the algorithm has the same law against $\mathcal{E}$ and against $\mathcal{E}'$.
 \end{lemma}
 
 \begin{proof}
-  Inverse of the cumulative distribution function, for a finite space enumerated in a fixed order.
+  \leanok
+  The conditional laws of the observations, actions and partial feedbacks given the past are the
+  kernels of $\mathcal{E}$ read through $g$; a conditional law that factors through a statistic is
+  the conditional law given that statistic. The history stopped by the stopping rule is the image of
+  the history stopped by its preimage, and the stopped history has the same law in every run (LML's
+  \texttt{IsAlgEnvSeq.hasLaw\_stoppedValue\_sigmaHistory}).
+\end{proof}
+
+\begin{lemma}[Relabelling of runs along maps]
+  \label{lem:relabel_run}
+  \lean{Learning.IdentAlg.comapObsFeedback, Learning.IsAlgEnvSeq.mapObsFeedback,
+    Learning.IdentAlg.outputMeasure_comapObsFeedback, Learning.map_stoppedHistMeasure_of_history_eq}
+  \leanok
+  \uses{def:protocol}
+  Let $f_O : \mathcal{O}' \to \mathcal{O}$ and $f_Y : \mathcal{Y}' \to \mathcal{Y}$ be measurable and
+  let $\mathcal{E}$, $\mathcal{E}'$ be environments such that the kernels of $\mathcal{E}$ on the
+  histories transported by $f_O$ and $f_Y$ are the images by $f_O$ and $f_Y$ of the kernels of
+  $\mathcal{E}'$. Transporting a run against $\mathcal{E}'$ of the algorithm that reads its rounds
+  through $f_O$ and $f_Y$ gives a run against $\mathcal{E}$ of the original algorithm, and the
+  outputs have the same law. The maps need not be injective.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  The conditional laws of the transported processes are the images of the kernels of
+  $\mathcal{E}'$, which are the kernels of $\mathcal{E}$ on the transported histories; conclude as
+  in Lemma~\ref{lem:partial_feedback_run}.
+\end{proof}
+
+\begin{lemma}[Stopped histories are determined before stopping]
+  \label{lem:stopped_law_pre_stop}
+  \lean{Learning.preStop, Learning.map_stoppedHist_eq_of_forall_preStop}
+  \leanok
+  \uses{def:protocol}
+  Let $S$ be a stopping rule. If two finite measures on the sequences of rounds agree on the events
+  $\{H_L \in G\}$ for every $L$ and every measurable set $G$ of histories of $L$ rounds none of whose
+  proper prefixes belongs to $S$, then the history stopped by $S$ has the same law under both.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  The event that the stopped history belongs to $A$ is the disjoint union of the events
+  $\{\tau = m, H_m \in A\}$, $m \in \N$, which are of the form $\{H_m \in G\}$ with $G$ as in the
+  statement, and of the event $\{\tau = \infty, H_c \in A\}$ (the stopped history at $\tau = \infty$
+  is a history of a fixed length $c$), the decreasing limit of the events
+  $\{\tau \ge N + c + 1, H_c \in A\}$, which are of the same form.
+\end{proof}
+
+\begin{lemma}[Mixture representation of the laws of histories]
+  \label{lem:hist_mixture}
+  \lean{Learning.trajMeasure_hist_snoc, Learning.exists_trajMeasure_hist_eq_of_factor,
+    Learning.trajMeasure_hist_eq_lintegral_of_factor, Learning.stoppedHistMeasure_eq_comp_of_factor}
+  \leanok
+  \uses{def:protocol, lem:stopped_law_pre_stop}
+  Assume that the observation, action and feedback spaces are countable. Then
+  $P(H_{L+1} = h r) = P(H_L = h)\, \kappa_L(h)(\{r\})$ for the step kernel $\kappa_L$ of round $L$.
+  Let $\rho$ be a probability measure on a countable set $T$, $\mathcal{E}$ and $\mathcal{E}_t$
+  ($t \in T$) environments, $D$ a set of histories closed under prefixes, and $C(h) \subseteq T$
+  sets with $C(\emptyset) = T$ and $C(h r) \subseteq C(h)$, such that for some factors $g(h, r)$ and
+  for all $h r \in D$: $\kappa^{\mathcal{E}_t}_L(h)(\{r\}) = g(h, r)\, \mathbf{1}_{C(h r)}(t)$ for
+  $t \in C(h)$, and $\kappa^{\mathcal{E}}_L(h)(\{r\})\, \rho(C(h)) = g(h, r)\, \rho(C(h r))$. Then
+  for $h \in D$, $P_{\mathcal{E}}(H_L = h) = \int P_{\mathcal{E}_t}(H_L = h)\, d\rho(t)$. If
+  moreover the histories along which the interaction stopped by $S$ has not stopped belong to $D$,
+  the law of the history stopped by $S$ under $\mathcal{E}$ is the mixture over $t \sim \rho$ of its
+  laws under the $\mathcal{E}_t$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  By induction on $L$, $P_{\mathcal{E}_t}(H_L = h) = G(h)\, \mathbf{1}_{C(h)}(t)$ and
+  $P_{\mathcal{E}}(H_L = h) = G(h)\, \rho(C(h))$ with $G(h r) = G(h)\, g(h, r)$; integrate in $t$.
+  The last statement follows from Lemma~\ref{lem:stopped_law_pre_stop}, summing over the countably
+  many histories of a set $G$.
+\end{proof}
+
+This is the formal counterpart of a \emph{tape} argument: the environments $\mathcal{E}_t$ read
+their randomness from a tape $t$ drawn beforehand, while $\mathcal{E}$ draws it when needed.
+
+\subsection{The reduced setting and the records}
+
+\begin{definition}[Reduced setting]
+  \label{def:reduced_setting}
+  \lean{Chase2026Tight.refreshBits, Chase2026Tight.lossBit, Chase2026Tight.redStrategy,
+    Chase2026Tight.banditStrategyOn, Chase2026Tight.reducedAlg}
+  \leanok
+  \uses{def:strategy, def:embedding, def:sbi}
+  The reduced strategy $S^{\mathrm{red}}_\theta$ is the environment with observations the advice
+  bits $\{0,1\}^{[k] \times [n]}$, actions the arms $\alpha$ of the general types and feedbacks the
+  loss bit of the pulled arm: the advice bits are uniform in the first round, and after a round in
+  which an arm of batch $u'$ is pulled, the bits of batch $u'$ are redrawn uniformly; the loss bit
+  of the pulled arm has the law of its loss under $S_\theta$. The reduced algorithm
+  $B^{\mathrm{red}}$ of an SBI algorithm $B$ on the general types reads advice bits $b$ as the
+  advice $\rho(e_b(\tau(\cdot)))$ and loss bits as losses $0$ or $1$.
+\end{definition}
+
+\begin{lemma}[Runs in the reduced setting]
+  \label{lem:algorithm_realization}
+  \lean{Chase2026Tight.outputMeasure_comapBanditFeedback_eq_banditStrategyOn,
+    Chase2026Tight.outputMeasure_reducedAlg, Chase2026Tight.outputMeasure_comapBanditFeedback_strategyOn}
+  \leanok
+  \uses{def:reduced_setting, lem:partial_feedback_run, lem:relabel_run}
+  For every SBI algorithm $B$ on the general types (bandit feedback) and every $\theta$, the output
+  of $B$ against $S_\theta$ (\texttt{strategyOn}) has the law of the output of $B^{\mathrm{red}}$
+  against $S^{\mathrm{red}}_\theta$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  The kernels of \texttt{strategyOn} read the past rounds only through the losses of the pulled
+  arms: Lemma~\ref{lem:partial_feedback_run} replaces the loss vectors by the losses of the pulled
+  arms. The advice and the losses are then the images of the advice bits and of the loss bits, with
+  the kernels of the reduced strategy: Lemma~\ref{lem:relabel_run}.
+\end{proof}
+
+\begin{definition}[Law of the records]
+  \label{def:record}
+  \lean{Chase2026Tight.recordOf, Chase2026Tight.recordLaw, Chase2026Tight.recProb}
+  \leanok
+  \uses{def:strategy}
+  $\rho_w$ is the law of a record of batch $u$ under $S_0$ ($w = \mathrm{none}$) or $S_{(u, v)}$
+  ($w = v$): $a$ uniform and, given $a$, $c$ uniform for $S_0$, and $c = a_v$ with probability
+  $1/2 + \eps$ for $S_{(u, v)}$. It is the image, by the projection on the advice and the correct
+  arm of the batch, of the law $P_{\theta'}$ of a round of the two-batch game, where
+  $\theta' = (1, v)$ if $w = v$ and $\theta' = 0$ otherwise.
+\end{definition}
+
+\begin{definition}[Tape strategies]
+  \label{def:tape_strategy}
+  \lean{Chase2026Tight.tapeStrategy, Chase2026Tight.roundConstr, Chase2026Tight.tapeConstr}
+  \leanok
+  \uses{def:reduced_setting, def:record}
+  For a tape $t = (t_0, \dots, t_{M-1})$ of records of batch $u$, the tape strategy $S^t$ is the
+  reduced strategy $S^{\mathrm{red}}_0$, except that while batch $u$ has been pulled $j < M$ times,
+  the advice bits of batch $u$ are those of $t_j$, and at the $(j+1)$-th pull of batch $u$ its
+  correct arm is that of $t_j$. It does not depend on $\theta$. A history $h$ constrains the tape:
+  $t \in C(h)$ iff for every round of $h$ before the $M$-th pull of batch $u$, the record of the
+  next pull has the advice bits of batch $u$ shown in that round and, if batch $u$ is pulled, the
+  correct arm revealed by the loss bit.
+\end{definition}
+
+\begin{lemma}[Steps of the reduced strategies and records]
+  \label{lem:record_steps}
+  \lean{Chase2026Tight.recordLaw_fst_eq, Chase2026Tight.recordLaw_eq_mul,
+    Chase2026Tight.tapeConstr_snoc_of_inBatch, Chase2026Tight.tapeConstr_snoc_of_not_inBatch,
+    Chase2026Tight.bitsKernel_singleton_mul, Chase2026Tight.lossBitKernel_singleton_mul}
+  \leanok
+  \uses{def:tape_strategy}
+  Let $j$ be the number of pulls of batch $u$ in a history $h$, and $C_j(h)$ the constraint of $h$
+  on the record $t_j$. If $h$ is empty or ends with a pull of batch $u$, $C_j(h)$ is the whole set
+  of records; otherwise it is empty or the set of records with the advice bits of batch $u$ of the
+  last round of $h$. Consequently, the probability under $S^{\mathrm{red}}_\theta$ of advice bits
+  $o$ given $h$, times $\rho_w(C_j(h))$, is the probability of the advice bits of the other batches
+  times $\rho_w(C_j(h) \cap \{a = o_u\})$; and the probability of a loss bit given $h$, $o$ and a
+  pulled arm of batch $u$, times $\rho_w(\{a = o_u\})$, is $\rho_w$ of the record with advice bits
+  $o_u$ and the correct arm revealed by the loss bit.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  The first statements by induction on $h$: the constraint on $t_j$ only comes from the rounds since
+  the last pull of batch $u$, which all show the same advice bits of batch $u$ in a consistent
+  history. Under the uniform law of the advice bits, the bits of batch $u$ are uniform and
+  independent of the other batches (\texttt{PMF.toMeasure\_uniformOfFintype\_singleton\_eq\_mul}),
+  and $\rho_w(\{a = \beta, c\}) = 2^{-n}\, P_w(c \mid \beta)$
+  (Definition~\ref{def:record}).
 \end{proof}
 
 \begin{lemma}[Record representation]
   \label{lem:record_representation}
-  \uses{def:record, lem:algorithm_realization, lem:loss_law_cond}
-  For every learner (or SBI algorithm) and every $\theta$, there is a probability space carrying
-  independent families: i.i.d.\ record sequences $(R^{u'}_j)_{j \ge 1}$ of law $\rho^{u'}_\theta$ for
-  every batch $u'$, i.i.d.\ losses of arm $0$, the randomness of the unobserved losses, and the
-  learner's randomness, all but the records with laws not depending on $\theta$, and a run of the
-  learner against $S_\theta$ whose observed history (advice, arms, observed losses, output) is a
-  measurable function, not depending on $\theta$, of these variables. In the $j$-th pull of batch
-  $u'$, the advice and the correct arm of batch $u'$ are those of $R^{u'}_j$. By the uniqueness of
-  the law of a run (LML's \texttt{isAlgEnvSeq\_unique}), the observed history of every run against
-  $S_\theta$ has the law of this representation.
+  \lean{Chase2026Tight.stoppedHistMeasure_redStrategy_eq_comp}
+  \leanok
+  \uses{def:record, def:tape_strategy, lem:hist_mixture, lem:record_steps}
+  Let $B$ be an algorithm in the reduced setting whose stopping rule $S$ stops at the latest at its
+  $M$-th pull of batch $u$. Under $S^{\mathrm{red}}_0$ and $S^{\mathrm{red}}_{(u, v)}$, the law of the
+  history stopped by $S$ is the mixture, over a tape of $M$ i.i.d.\ records with law $\rho_w$, of
+  its laws under the tape strategies $S^t$, which do not depend on $w$.
 \end{lemma}
 
 \begin{proof}
-  Build the advice of batch $u'$ in a round as the advice of the record of its next pull, the
-  correct arm of a pulled batch from its record, the other losses from the independent randomness
-  through \texttt{lossOf}, and the arms with Lemma~\ref{lem:algorithm_realization}. Since the advice
-  of batch $u'$ is redrawn exactly after its pulls, the conditional laws of the observations and
-  feedbacks given the past are those of $S_\theta$: the process is a run.
+  \leanok
+  Lemma~\ref{lem:hist_mixture} with $\rho = \rho_w^{\otimes M}$, the histories with at most $M$
+  pulls of batch $u$ as $D$ (the algorithm has not stopped before its $M$-th pull) and the
+  constraints $C(h)$ of Definition~\ref{def:tape_strategy}, which form a box: $\rho_w^{\otimes
+  M}(C(h)) = \prod_j \rho_w(C_j(h))$, and each round only adds a constraint on the record of the next
+  pull of batch $u$. The step factors are given by Lemma~\ref{lem:record_steps}; the other batches,
+  arm $0$ and the algorithm contribute the same factors under $S^{\mathrm{red}}_\theta$ and $S^t$.
+  This is the paper's observation that the advice of batch $u$ is redrawn only after a pull of
+  batch $u$, so that the successive records of batch $u$ are i.i.d., whatever the algorithm does
+  between the pulls.
 \end{proof}
 
-\begin{lemma}[Events before the $T^\star$-th pull]
+\begin{lemma}[Data processing through the records]
   \label{lem:events_before_pulls}
-  \uses{lem:record_representation}
-  Let $T^\star \in \N$ and $E$ an event of the observed history up to the stopping time $\tau$ of an
-  SBI algorithm. For $\theta \in \{0\} \cup \{(u, v) : v \in [n]\}$, the probability of
-  $E \cap \{N_u(\tau) \le T^\star\}$ under $S_\theta$ is
-  $(\rho^{u, T^\star}_\theta \otimes \mu)(F)$ for a measurable set $F$ and a law $\mu$ that do not
-  depend on $\theta$, where $\rho^{u, T^\star}_\theta = (\rho^u_\theta)^{T^\star}$ is the law of the
-  first $T^\star$ records of batch $u$.
+  \lean{Chase2026Tight.recordOutputKernel, Chase2026Tight.outputMeasure_eq_comp_pi_roundLaw,
+    Chase2026Tight.klDiv_outputMeasure_le_klDiv_pi}
+  \leanok
+  \uses{lem:algorithm_realization, lem:record_representation, def:record}
+  Let $B$ be an identification algorithm (bandit feedback, general types) that stops at the latest
+  at its $M$-th pull of batch $u$. Under $S_0$ and $S_{(u, v)}$, the law of its output is
+  $K \circ P_{\theta'}^{\otimes M}$ for a Markov kernel $K$ that does not depend on the strategy,
+  where $\theta' = 0$, respectively $(1, v)$, and $P_{\theta'}$ is the law of a round of the
+  two-batch game. Consequently, with $Q_\theta$ the law of the output under $S_\theta$,
+  \[
+    \KL\Bigl(\frac1n \sum_{v \in [n]} Q_{(u, v)} \Bigm\| Q_0\Bigr)
+      \le \KL\Bigl(\frac1n \sum_{v \in [n]} P_{(1, v)}^{\otimes M} \Bigm\| P_0^{\otimes M}\Bigr).
+  \]
 \end{lemma}
 
 \begin{proof}
-  On $\{N_u(\tau) \le T^\star\}$ the observed history only uses the first $T^\star$ records of batch
-  $u$ and the advice part of record $T^\star + 1$, which is uniform under every $\theta$ and
-  independent of the first $T^\star$ records; the records of the other batches have law
-  $\rho^{u'}_0$ for these $\theta$. Take $\mu$ the law of all the other variables.
+  \leanok
+  By Lemma~\ref{lem:algorithm_realization}, the output law is that of the reduced algorithm in the
+  reduced setting, the output rule applied to the stopped history, whose law is given by
+  Lemma~\ref{lem:record_representation}: $K$ is the output rule composed with the laws of the
+  stopped histories under the tape strategies, read through the projection of the rounds of the
+  two-batch game on the records (Definition~\ref{def:record}). Composition with a kernel commutes
+  with the mixture over $v$; conclude with the data processing inequality for Markov kernels
+  (Mathlib's \texttt{klDiv\_comp\_right\_le}).
 \end{proof}

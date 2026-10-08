@@ -5,7 +5,7 @@ Authors: Rémy Degenne
 -/
 module
 
-public import Chase2026Tight.CIM2026.Setting
+public import Chase2026Tight.CIM2026.Reduction
 
 /-!
 # Lemma 3.1: reduction from special batch identification to the bandit with expert advice
@@ -43,6 +43,10 @@ theorem exists_isGood_expectedRounds_le (k n : ℕ) {ε : ℝ} (hε : ε ∈ Set
         (Y : ℕ → Ω → Arm k → ℝ) (out : Ω → Batch k),
         A'.toIdentAlg.IsRun (strategy ε θ) O X Y out P →
           expectedRounds A' O X Y P ≤ T := by
-  sorry
+  obtain ⟨A', hA', hA'T⟩ := exists_isGoodOn_lintegral_stoppingTime_le (σ := id) (ρ := id)
+    (τ := id) (τ' := id) (fun _ ↦ rfl) (fun _ ↦ rfl) hε alg hT1 (r := r T)
+    (fun θ _ _ P _ O A Y h ↦ hr θ T P O A Y (by rwa [strategyOn_id] at h)) hT
+  refine ⟨A', (isGoodOn_id ε A').mp hA', fun θ _ _ P _ O X Y out h ↦ ?_⟩
+  exact hA'T θ P O X Y out (by rwa [strategyOn_id])
 
 end Chase2026Tight

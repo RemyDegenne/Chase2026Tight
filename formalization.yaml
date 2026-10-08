@@ -99,5 +99,30 @@ status:
 
     The blueprint (7 chapters) decomposes every proof into labelled lemmas; the plan is in
     `notes/blueprint-outline.md`. The 5 comparator challenges compile (`lake build Comparator`).
-  sorry_count: 5
+
+    Phase 2 complete on 2026-10-08 (six packages, `notes/phase2-plan.md`): every result listed
+    above is proved, with no `sorry` in the library, and the 5 headline theorems depend only on the
+    axioms `propext`, `Classical.choice`, `Quot.sound`. `lake build Chase2026Tight --wfail`,
+    `lake exe runLinter Chase2026Tight` and `lake exe checkdecls blueprint/lean_decls` pass; every
+    blueprint statement and proof is `\leanok`. The statements and the definitions in their closure
+    are unchanged since phase 1: the regenerated comparator challenges differ only in imports,
+    namespace stubs, docstrings and a linter attribute, and `lake build Comparator` passes; the
+    full comparator run (`scripts/comparator-verify.sh`) has not been done yet.
+    All the lemmas are proved for the strategies on general arm and expert types
+    (`strategyOn σ ρ τ τ'`, through reduction maps to the reduced setting), the paper's statements
+    being the case of identity maps and Theorem 6.1 the case of `Fin K` arms and `Fin N` experts.
+    Proof routes that differ from the paper: Lemma 4.1 through the χ² divergence of the mixture
+    (no Jensen step); Lemmas 4.2 and 5.1 through a representation of the stopped history by i.i.d.
+    pull records of one batch (the paper treats the learner of the two-batch game as passive and
+    proves Lemma 5.1 by simulating the big game inside the small one; neither step is rigorous as
+    written, e.g. a learner can pull arm `0` to see the next advice of a batch before stopping),
+    proved at the level of kernels (Ionescu-Tulcea trajectory laws factored through a tape of
+    records), with `ln(1 + n/8)` in place of `ln(n/10)`, valid for every `n ≥ 1`; Pinsker's
+    inequality for events (not in Mathlib) from the divergences of the restrictions to `E` and
+    `Eᶜ`. Findings: Theorem 6.1 is false for `K = 1` and its proof needs `K ≥ 3`; Lemma 3.1 is false
+    for `T⋆ = 0`; the proof's "without loss of generality `n > 10`" fails for few experts per
+    batch (closed by the `ln(1 + n/8)` bounds); Lemma 4.1 holds for `T = 0`, and the KL bound
+    through the records holds for every `ε`. Library material to upstream:
+    `notes/upstreaming-candidates.md`.
+  sorry_count: 0
   sorry_in_definitions: 0

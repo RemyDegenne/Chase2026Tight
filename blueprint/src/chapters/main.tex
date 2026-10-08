@@ -3,31 +3,121 @@
 
 \begin{definition}[Embedding of the reduced setting]
   \label{def:embedding}
+  \lean{Chase2026Tight.liftAdvice, Chase2026Tight.reduceAdvice, Chase2026Tight.strategyOn,
+    Chase2026Tight.strategyOn_id, Chase2026Tight.strategyOn_feedbackIgnoresAction,
+    Chase2026Tight.IsGoodOn, Chase2026Tight.isGoodOn_id, Chase2026Tight.pullCount}
+  \leanok
   \uses{def:strategy}
   Let $K \ge 3$ and $N \ge 2K$, $k = \lfloor (K - 1)/2 \rfloor \ge 1$ and
   $n = \lfloor (N - 1)/k \rfloor \ge 1$. Embed $\Arm_k$ into $[K]$ and $\Exp_{k,n}$ into $[N]$. The
-  strategy $S_\theta$ on $[K]$ and $[N]$ gives loss $1$ to the extra arms and the advice of
-  expert $0$ to the extra experts.
+  strategy $S_\theta$ on $[K]$ and $[N]$ treats the extra arms as arm $0$ (same loss) and the
+  extra experts as expert $0$ (same advice). In Lean, the strategies are defined on general arm and
+  expert types $\alpha$, $\iota$ through reduction maps $\sigma : \alpha \to \Arm_k$,
+  $\tau : \iota \to \Exp_{k,n}$ with sections (\texttt{strategyOn}); the reduced setting is the
+  case of identity maps, and every lemma of the proof is stated in this generality.
 \end{definition}
 
-\begin{lemma}[Reduction in the embedded setting]
-  \label{lem:reduction_ext}
-  \uses{def:embedding, lem:reduction, lem:many_batches_general}
-  Lemmas~\ref{lem:reduction} and~\ref{lem:many_batches_general} hold for learners and SBI
-  algorithms on $[K]$ and $[N]$ against the embedded strategies.
+\begin{lemma}[The embedding into $K$ arms and $N$ experts]
+  \label{lem:fin_embedding}
+  \lean{Chase2026Tight.exists_fin_retraction, Chase2026Tight.card_arm, Chase2026Tight.card_expert,
+    Chase2026Tight.exists_finEmbedding, Chase2026Tight.lossOf_mem_zero_one,
+    Chase2026Tight.strategyOn_feedbackIn}
+  \leanok
+  \uses{def:embedding, def:arm, def:strategy}
+  If $2k + 1 \le K$ and $kn + 1 \le N$, there are maps $\sigma : [K] \to \Arm_k$ and
+  $\tau : [N] \to \Exp_{k,n}$ with sections $\rho$, $\tau'$ ($\sigma \circ \rho = \mathrm{id}$,
+  $\tau \circ \tau' = \mathrm{id}$). The losses of the strategies on general types are in
+  $\{0, 1\}$.
 \end{lemma}
 
 \begin{proof}
-  An extra arm has loss $1$, so its per-round regret against the special expert is at least
-  $\eps/2$ (Lemma~\ref{lem:per_round_regret}); pulling it carries no information on the special
-  batch, so the record representation (Lemma~\ref{lem:record_representation}) is unchanged.
+  \leanok
+  $\Arm_k$ has $2k + 1$ elements and $\Exp_{k,n}$ has $kn + 1$: take injections $\rho$, $\tau'$
+  into $[K]$, $[N]$ and left inverses $\sigma$, $\tau$ of them. The losses are those of the
+  reduced setting, in $\{0, 1\}$.
+\end{proof}
+
+\begin{lemma}[The pseudo-regret depends only on the learner and the adversary]
+  \label{lem:pseudoRegret_law}
+  \lean{Bandits.expertPseudoRegret_eq_of_isAlgEnvSeq}
+  \leanok
+  \uses{def:pseudo_regret, def:protocol}
+  Two runs of the same learner against the same adversary, possibly on different probability
+  spaces, have the same pseudo-regret.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  The pseudo-regret is the maximum over the experts of the expectation of a measurable function of
+  the trajectory of the run, and the law of the trajectory is determined by the learner and the
+  adversary.
+\end{proof}
+
+\begin{lemma}[Existence of runs]
+  \label{lem:exists_run}
+  \lean{Learning.IdentAlg.exists_isRun, Learning.IdentAlg.IsRun.comp_measurePreserving,
+    Learning.IsAlgEnvSeq.comp_measurePreserving,
+    ProbabilityTheory.HasCondDistrib.comp_measurePreserving,
+    ProbabilityTheory.hasCondDistrib_snd_fst_compProd}
+  \leanok
+  \uses{def:sbi}
+  Every identification algorithm has a run in every environment, on a probability space in any
+  universe large enough to contain the observations, actions, feedbacks and outputs.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  On the canonical space of the trajectories (Ionescu-Tulcea) times the output space, draw the
+  output from the output rule applied to the stopped history. Composition with a
+  measure-preserving map preserves runs; transport this run to a \texttt{ULift} of the space.
+\end{proof}
+
+\begin{lemma}[Reduction in the embedded setting]
+  \label{lem:reduction_ext}
+  \lean{Chase2026Tight.exists_lt_expertPseudoRegret_strategyOn}
+  \leanok
+  \uses{def:embedding, lem:reduction, lem:many_batches_general, lem:pseudoRegret_law,
+    lem:exists_run}
+  Lemmas~\ref{lem:reduction} and~\ref{lem:many_batches_general} hold for learners and SBI
+  algorithms on $[K]$ and $[N]$ against the embedded strategies. Consequently, let
+  $\eps \in (0, 0.1]$, $n \ge 1$, $T \ge 1$ and $r \in \R$ with
+  $1000\, r / \eps \le T < k \ln(1 + n/8) / (8 \eps^2)$. Then for every learner, some strategy
+  $S_\theta$ of the pool gives pseudo-regret $R_T > r$ (in every run).
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  The proofs of Lemmas~\ref{lem:reduction} and~\ref{lem:many_batches_general} are written for the
+  strategies on general types: an extra arm behaves as arm $0$ (its per-round regret against the
+  special expert is at least $\eps/2$, Lemma~\ref{lem:per_round_regret}, and pulling it does not
+  redraw any advice), and the record representation (Lemma~\ref{lem:record_representation}) only
+  sees the arms through their batches.
+
+  Suppose that under every strategy of the pool some run has $R_T \le r$. Then every run under
+  every strategy of the pool has $R_T \le r$ (Lemma~\ref{lem:pseudoRegret_law}), and
+  Lemma~\ref{lem:reduction} gives a good SBI algorithm whose expected number of rounds is at most
+  $T$ under every strategy of the pool. It has a run under $S_0$ (Lemma~\ref{lem:exists_run}), in
+  which it plays at least $k \ln(1 + n/8)/(8\eps^2) > T$ rounds in expectation by
+  Lemma~\ref{lem:many_batches_general}: a contradiction.
+\end{proof}
+
+\begin{lemma}
+  \label{lem:log_one_add_div_eight}
+  \lean{Chase2026Tight.log_le_four_mul_log_one_add_div_eight}
+  \leanok
+  For $x > 0$, $\ln x \le 4 \ln(1 + x/8)$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  With $y = x/8$, $(1 + y)^4 \ge 1 + 4y + 6y^2 \ge 8y = x$, since $6y^2 - 4y + 1 > 0$.
 \end{proof}
 
 \begin{theorem}[Main lower bound, Theorem 6.1]
   \label{thm:main}
   \lean{Chase2026Tight.exists_pseudoRegret_ge}
   \leanok
-  \uses{lem:reduction_ext}
+  \uses{lem:reduction_ext, lem:fin_embedding, lem:log_one_add_div_eight}
   There is a universal constant $c > 0$ such that for all $K \ge 3$, $N \ge 2K$ and
   $T \ge K \ln(N/K)$, and every learner for the bandit with expert advice, there is an adaptive
   adversary with losses in $\{0, 1\}$ under which the pseudo-regret of the learner after $T$ rounds
@@ -35,14 +125,20 @@
 \end{theorem}
 
 \begin{proof}
-  Let $k, n$ as in Definition~\ref{def:embedding}, $L = \ln(1 + n/8)$ and
-  $\eps = \sqrt{k L / (50 T)}$. Since $n \le 4N/K$, $L \le \ln(1 + N/(2K)) \le \ln(N/K)$ and
-  $k L \le \frac{K}{2} \ln(N/K) \le T/2$, so $\eps \le 0.1$. Suppose that the pseudo-regret of the
-  learner is at most $r(T) = \sqrt{T k L}/C$ under every strategy of the pool. Then
-  $1000\, r(T)/\eps \le T$ for $C$ large, and Lemma~\ref{lem:reduction_ext} gives a good SBI
-  algorithm with at most $T$ rounds in expectation, while Lemma~\ref{lem:many_batches_general} gives
-  at least $k L/(8\eps^2) = 50T/8 > T$: a contradiction. So some strategy gives pseudo-regret
-  $R_T > \sqrt{T k L}/C$. Finally $k \ge K/4$, and $L \ge \frac14 \ln(N/K)$ since $n \ge N/K \ge 2$.
+  \leanok
+  Let $k, n$ as in Definition~\ref{def:embedding}: $1 \le k$, $2k + 1 \le K \le 4k$,
+  $kn + 1 \le N \le k(n + 1)$ and $n \ge 1$; embed the reduced setting into $[K]$ and $[N]$
+  (Lemma~\ref{lem:fin_embedding}). Let $x = N/K \ge 2$, $L = \ln(1 + n/8)$ and
+  $\eps = \sqrt{k L / (50 T)}$. Then $x \le n$ (as $nK \ge n(2k + 1) \ge 2(N - k) + n \ge N$), so
+  $\ln x \le 4L$ (Lemma~\ref{lem:log_one_add_div_eight}); and $1 + n/8 \le x$ (as
+  $nK \le 4kn < 4N$ and $K \le N/2$), so $L \le \ln x$. Hence $T \ge K \ln x > 0$, so $T \ge 1$;
+  $k L \le \frac{K}{2} \ln x \le T/2$, so $\eps \in (0, 0.1]$; and $K \ln x \le 16 k L$. Let
+  $c = 10^{-5}$ and $r = c \sqrt{T K \ln x}$: then
+  $(1000\, r)^2 = 10^{-4}\, T K \ln x \le 16 \cdot 10^{-4}\, T k L \le T k L / 50 = (T \eps)^2$,
+  so $1000\, r / \eps \le T$, and $k L / (8 \eps^2) = 50 T / 8 > T$. Lemma~\ref{lem:reduction_ext}
+  gives a strategy $S_\theta$ under which every run has pseudo-regret
+  $R_T > r = c \sqrt{T K \ln(N/K)}$; its losses do not depend on the arm of the current round and
+  are in $\{0, 1\}$ (Lemma~\ref{lem:fin_embedding}).
 \end{proof}
 
 \begin{remark}

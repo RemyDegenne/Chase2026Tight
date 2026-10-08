@@ -37,6 +37,11 @@ public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 public import Mathlib.Probability.Distributions.Bernoulli
 public import Mathlib.Probability.Distributions.Uniform
 public import Mathlib.Probability.Kernel.Composition.MeasureCompProd
+public import Mathlib.Topology.Algebra.InfiniteSum.ENNReal
+public import Mathlib.InformationTheory.KullbackLeibler.Basic
+public import Mathlib.MeasureTheory.Integral.Pi
+public import Mathlib.Probability.Kernel.Composition.WithDensity
+public import Mathlib.InformationTheory.KullbackLeibler.DataProcessing
 
 /-! # Standalone extraction for `Chase2026Tight.expectedRounds_ge_of_isGood_one`
 Definitions are copied verbatim; theorem proofs are replaced by `sorry`.
@@ -57,6 +62,8 @@ namespace ProbabilityTheory
 end ProbabilityTheory
 namespace ProbabilityTheory.Kernel
 end ProbabilityTheory.Kernel
+namespace ENNReal
+end ENNReal
 namespace Learning
 end Learning
 namespace Learning.Round

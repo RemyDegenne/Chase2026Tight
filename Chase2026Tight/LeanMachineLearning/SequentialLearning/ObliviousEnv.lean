@@ -54,6 +54,10 @@ not have yet.
 * `IsAlgEnvSeq.ae_feedback_mem`, `IsAlgEnvSeq.ae_obs_mem`: in every run against an environment
   with `FeedbackIn env s` (resp. `ObsIn env s`), the feedbacks (resp. observations) lie in `s`
   almost surely.
+* `IsAlgEnvSeq.hasCondDistrib_feedback_of_eq_comap`,
+  `IsAlgEnvSeq.hasCondDistrib_feedback_of_feedbackIgnoresAction`: in a run against an environment
+  whose feedback kernel reads only a statistic of the round (for instance, does not read the
+  action), the feedback has the corresponding conditional law given that statistic.
 -/
 
 @[expose] public section
@@ -216,6 +220,28 @@ lemma ae_obs_mem (h : IsAlgEnvSeq O A Y alg env P) {s : Set 𝓞} (henv : env.Ob
     Measure.ae_compProd_of_ae_ae (measurable_snd hs) (ae_of_all _ fun p ↦ henv n p)
   rw [← h_law.map_eq] at h1
   exact ae_of_ae_map h_law.aemeasurable h1
+
+/-- In a run against an environment whose feedback kernel of round `n` reads only a statistic
+`f` of the history, the observation and the action of round `n` (`env.feedback n = κ.comap f`),
+the feedback of round `n` has conditional law `κ` given that statistic. -/
+lemma hasCondDistrib_feedback_of_eq_comap (h : IsAlgEnvSeq O A Y alg env P) {n : ℕ}
+    {𝓩 : Type*} [MeasurableSpace 𝓩] {f : (Hist 𝓞 𝓐 𝓨 n × 𝓞) × 𝓐 → 𝓩} (hf : Measurable f)
+    {κ : Kernel 𝓩 𝓨} [IsSFiniteKernel κ] (hκ : env.feedback n = κ.comap f hf) :
+    HasCondDistrib (Y n) (fun ω ↦ f ((history O A Y n ω, O n ω), A n ω)) κ P := by
+  have h1 := h.hasCondDistrib_feedback n
+  rw [hκ] at h1
+  exact h1.comp_right
+
+/-- **Feedback of an environment ignoring the action** (`lem:feedback_ignores_action_cond`). In a
+run against an environment whose feedback kernel of round `n` does not read the action of the
+round, `env.feedback n = κ.comap Prod.fst` (`Environment.FeedbackIgnoresAction`), the feedback of
+round `n` has conditional law `κ` given the history and the observation of round `n` (and, by
+definition of a run, `κ.comap Prod.fst` given the history, the observation and the action). -/
+lemma hasCondDistrib_feedback_of_feedbackIgnoresAction (h : IsAlgEnvSeq O A Y alg env P)
+    {n : ℕ} {κ : Kernel (Hist 𝓞 𝓐 𝓨 n × 𝓞) 𝓨} [IsSFiniteKernel κ]
+    (hκ : env.feedback n = κ.comap Prod.fst measurable_fst) :
+    HasCondDistrib (Y n) (fun ω ↦ (history O A Y n ω, O n ω)) κ P :=
+  h.hasCondDistrib_feedback_of_eq_comap measurable_fst hκ
 
 end General
 

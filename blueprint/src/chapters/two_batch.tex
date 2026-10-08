@@ -7,83 +7,182 @@ $P_{\mix^T} = \frac1n \sum_{v \in [n]} P_{(1,v)}^T$.
 
 \begin{lemma}[Density of a round]
   \label{lem:roundLaw_withDensity}
-  \uses{def:strategy}
-  $P_{(1,v)}$ has density $f_v(g) = 1 + (2 c_v(g) - 1)\, 2\eps$ with respect to $P_0$, where
-  $c_v(g) = 1$ if the correct arm of batch $1$ in the round $g$ is the arm advised by $(1, v)$ and
-  $c_v(g) = 0$ otherwise.
+  \lean{Chase2026Tight.roundLaw_mk_eq_withDensity, Chase2026Tight.roundDensity,
+    Chase2026Tight.pi_roundLaw_mk_eq_withDensity}
+  \leanok
+  \uses{def:strategy, lem:pi_withDensity}
+  Let $0 \le \eps \le 1/2$. $P_{(1,v)}$ has density $f_v(g) = 1 + (2 c_v(g) - 1)\, 2\eps$ with
+  respect to $P_0$, where $c_v(g) = 1$ if the arm advised by $(1, v)$ in the round $g$ is the
+  correct arm of batch $1$ (it has loss $0$) and $c_v(g) = 0$ otherwise. Hence $P_{(1,v)}^T$ has
+  density $g \mapsto \prod_{t < T} f_v(g_t)$ with respect to $P_0^T$.
 \end{lemma}
 
 \begin{proof}
-  The advice and the loss of arm $0$ have the same law under both; given the advice, the correct
-  arm is the advised one with probability $1/2 + \eps$ under $P_{(1,v)}$ and $1/2$ under $P_0$.
+  \leanok
+  Under both strategies the loss vector of the round is a function of the loss bit $z$ of arm $0$
+  and of the correct arm $(1, c)$ of batch $1$, and given the advice $e$ (with bit $b$ for the
+  expert $(1, v)$), the law of $(z, c)$ on $\{0, 1\}^2$ is $\Ber(1/2 - \eps/2) \otimes
+  \mathrm{Unif}$ under $P_0$ and $\Ber(1/2 - \eps/2) \otimes \mathrm{Law}(b \oplus \Ber(1/2 -
+  \eps))$ under $P_{(1,v)}$: the correct arm is the advised one with probability $1/2 + \eps$
+  under $P_{(1,v)}$ and $1/2$ under $P_0$. Comparing the masses of the four points, the second
+  law has density $(z, c) \mapsto 1 \pm 2\eps$ (sign $+$ iff $c = b$) with respect to the first;
+  densities pass to images, and to the composition-product with the law of the advice. The
+  product statement is Lemma~\ref{lem:pi_withDensity}.
 \end{proof}
 
 \begin{lemma}[Expected likelihood ratios]
   \label{lem:integral_ratio}
+  \lean{Chase2026Tight.lintegral_prod_roundDensity, Chase2026Tight.lintegral_roundDensity,
+    Chase2026Tight.lintegral_roundDensity_mul}
+  \leanok
   \uses{lem:roundLaw_withDensity, lem:pi_withDensity}
-  For $v, v^\star \in [n]$, $\int \prod_{t < T} f_v(g_t) \, dP_{(1,v^\star)}^T(g)$ is $1$ if
-  $v \ne v^\star$ and $(1 + 4\eps^2)^T$ if $v = v^\star$.
+  Let $0 \le \eps \le 1/2$. For $v, v^\star \in [n]$,
+  $\int \prod_{t < T} f_v(g_t) \, dP_{(1,v^\star)}^T(g)$ is $1$ if $v \ne v^\star$ and
+  $(1 + 4\eps^2)^T$ if $v = v^\star$.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   The integral of a product of functions of independent coordinates is the product of the
-  integrals. Under $P_{(1,v^\star)}$, the bit of $v \ne v^\star$ is uniform and independent of the
-  correct arm, so $\E[f_v] = 1$; for $v = v^\star$, $c_v \sim \Ber(1/2 + \eps)$ and
-  $\E[f_v] = 1 + 4\eps^2$.
+  integrals (Tonelli), so it suffices to show $\E_{P_{(1,v^\star)}}[f_v] =
+  \E_{P_0}[f_v f_{v^\star}]$ is $1 + 4 \eps^2$ if $v = v^\star$ and $1$ otherwise. Given the advice,
+  with bits $b, b^\star$ for $(1, v)$ and $(1, v^\star)$, the correct bit is uniform under $P_0$, so
+  $\E_{P_0}[f_v f_{v^\star} \mid e]$ is $\frac{(1 + 2\eps)^2 + (1 - 2\eps)^2}{2} = 1 + 4\eps^2$ if
+  $b = b^\star$ and $(1 + 2\eps)(1 - 2\eps) = 1 - 4\eps^2$ otherwise. If $v = v^\star$, $b = b^\star$
+  always. If $v \ne v^\star$, flipping the uniform bit of $(1, v)$ preserves the law of the advice
+  and exchanges the two cases, so the expectation is
+  $\frac{(1 + 4\eps^2) + (1 - 4\eps^2)}{2} = 1$.
 \end{proof}
 
 \begin{lemma}[KL bound, Lemma 4.1]
   \label{lem:kl_bound}
   \lean{Chase2026Tight.klDiv_mixture_pi_roundLaw_le}
   \leanok
-  \uses{lem:klDiv_mixture_le, lem:integral_ratio}
+  \uses{lem:klDiv_mixture_le, lem:roundLaw_withDensity, lem:integral_ratio}
   If $0 < \eps \le 0.1$, then for all $T \ge 1$ and $n \ge 1$,
   $\KL(P_{\mix^T} \,\|\, P_0^T) \le \frac{(1 + 4\eps^2)^T - 1}{n}$.
 \end{lemma}
 
 \begin{proof}
-  By Lemma~\ref{lem:klDiv_mixture_le} with weights $1/n$ and Lemma~\ref{lem:integral_ratio},
-  $\KL(P_{\mix^T} \| P_0^T) \le \frac1n \sum_{v^\star} \log\big(\frac{n - 1 + (1 + 4\eps^2)^T}{n}\big)
-  = \log\big(1 + \frac{(1 + 4\eps^2)^T - 1}{n}\big) \le \frac{(1 + 4\eps^2)^T - 1}{n}$.
+  \leanok
+  By Lemma~\ref{lem:roundLaw_withDensity}, $P_{(1,v)}^T$ has density
+  $F_v(g) = \prod_{t < T} f_v(g_t)$ with respect to $P_0^T$. By Lemma~\ref{lem:klDiv_mixture_le}
+  with weights $1/n$ and Lemma~\ref{lem:integral_ratio},
+  $\KL(P_{\mix^T} \| P_0^T) \le \frac1{n^2} \sum_{v^\star} \sum_v \int F_v \, dP_{(1,v^\star)}^T - 1
+  = \frac{n (1 + 4\eps^2)^T + n (n - 1)}{n^2} - 1 = \frac{(1 + 4\eps^2)^T - 1}{n}$. (The paper
+  bounds the divergence by $\log\big(1 + \frac{(1 + 4\eps^2)^T - 1}{n}\big)$ with Jensen's
+  inequality, then uses $\log(1 + x) \le x$; the bound holds for $T = 0$ as well.)
+\end{proof}
+
+\begin{definition}[Stopping at the $M$-th pull of a batch]
+  \label{def:stop_at_pulls}
+  \lean{Chase2026Tight.stopAtPulls}
+  \leanok
+  \uses{def:sbi}
+  Let $A'$ be an SBI algorithm, $u \in [k]$ and $M \in \N$. The identification algorithm
+  $B(A', u, M)$, with output in $\{\mathrm{true}, \mathrm{false}\}$, runs the sampling rule of
+  $A'$, stops when $A'$ stops or as soon as it has pulled batch $u$ $M$ times, and outputs
+  $\mathrm{true}$ iff it has pulled batch $u$ fewer than $M$ times and the output of $A'$ on its
+  history (drawn from the output rule of $A'$) is batch $0$.
+\end{definition}
+
+\begin{lemma}[Output of the stopped algorithm]
+  \label{lem:stop_at_pulls_output}
+  \lean{Chase2026Tight.outputMeasure_stopAtPulls_le,
+    Chase2026Tight.measure_le_outputMeasure_stopAtPulls_add}
+  \leanok
+  \uses{def:stop_at_pulls}
+  Let $A'$ be an SBI algorithm, $u \in [k]$, $M \in \N$, $B = B(A', u, M)$ and $\tau$ the number of
+  rounds played by $A'$. In every environment, $B$ outputs $\mathrm{true}$ with probability at most
+  the probability that $A'$ outputs batch $0$. In every run of $A'$, the probability of
+  $N_u(\tau) < M$ is at most the probability that $B$ outputs $\mathrm{true}$ plus the probability
+  that $A'$ does not output batch $0$ (in the same environment).
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Along a run of the common sampling rule, $B$ stops at $\tau_B = \min(\tau, \tau_M)$, where
+  $\tau_M$ is the time of the $M$-th pull of batch $u$. If the history at $\tau_B$ has fewer than
+  $M$ pulls of batch $u$, then $\tau_B = \tau$ and the stopped histories of $A'$ and $B$ coincide;
+  otherwise $B$ outputs $\mathrm{false}$. Hence, given the stopped histories, the probability that
+  $B$ outputs $\mathrm{true}$ is at most the probability that $A'$ outputs batch $0$; integrate
+  against the law of the run. If $N_u(\tau) < M$, then batch $u$ is pulled fewer than $M$ times up
+  to $\tau$, so $\tau_B = \tau$ and the stopped histories coincide, with fewer than $M$ pulls of
+  batch $u$: given them, the probabilities that $B$ outputs $\mathrm{true}$ and that $A'$ does not
+  output batch $0$ sum to $1$. Integrate (Markov's inequality).
+\end{proof}
+
+\begin{lemma}[Choice of the number of pulls]
+  \label{lem:two_batch_arith}
+  \lean{Chase2026Tight.one_add_pow_floor_sub_one_div_le}
+  \leanok
+  Let $n \ge 1$, $0 < \eps \le 0.1$ and $M = \lfloor \ln(1 + n/8)/(4\eps^2) \rfloor + 1$. Then
+  $\frac{(1 + 4\eps^2)^M - 1}{n} \le \frac14$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  $(1 + 4\eps^2)^M \le e^{4\eps^2 M} \le e^{\ln(1 + n/8) + 4\eps^2} = (1 + n/8)\, e^{4\eps^2}$ and
+  $e^{4\eps^2} \le 1 + 0.04 + 0.04^2 \le 1.05$, so
+  $(1 + 4\eps^2)^M - 1 \le 0.05 + 1.05\, n/8 \le n/4$.
 \end{proof}
 
 \begin{lemma}[One batch of a general game]
   \label{lem:two_batch_general}
-  \uses{lem:kl_bound, lem:events_before_pulls, lem:pinsker_event, def:is_good, def:record}
+  \lean{Chase2026Tight.ofReal_le_lintegral_pullsBefore}
+  \leanok
+  \uses{lem:kl_bound, lem:events_before_pulls, lem:pinsker_event, def:is_good, def:record,
+    def:stop_at_pulls, lem:stop_at_pulls_output, lem:two_batch_arith}
   Let $k \ge 1$, $n \ge 1$, $0 < \eps \le 0.1$, $u \in [k]$ and $A'$ a good SBI algorithm. Then
   $\E_{S_0}[N_u(\tau)] \ge \frac{\ln(1 + n/8)}{8 \eps^2}$, where $\tau$ is the number of rounds
   played by $A'$.
 \end{lemma}
 
 \begin{proof}
-  Let $T^\star = \lfloor \ln(1 + n/8)/(4\eps^2) \rfloor$, so that
-  $\frac{(1 + 4\eps^2)^{T^\star} - 1}{n} \le \frac{e^{4\eps^2 T^\star} - 1}{n} \le \frac18$. Let $E$
-  be the event that $N_u(\tau) \le T^\star$ and $A'$ outputs batch $0$, and $P_\mix$ the law of the
-  run under the strategy $S_{(u, v)}$ with $v$ uniform. By Lemma~\ref{lem:events_before_pulls},
-  $P_0(E)$ and $P_\mix(E)$ are the probabilities of the same event under $\rho_0^{u, T^\star} \otimes \mu$
-  and $\rho_{\mix}^{u, T^\star} \otimes \mu$ for some law $\mu$ (Definition~\ref{def:record}). The
-  records are images of the rounds of the two-batch game, so by the data processing inequality
-  and Lemma~\ref{lem:kl_bound},
-  $\KL(\rho_{\mix}^{u, T^\star} \otimes \mu \| \rho_0^{u, T^\star} \otimes \mu) \le
-  \KL(P_{\mix^{T^\star}} \| P_0^{T^\star}) \le \frac18$, and by Lemma~\ref{lem:pinsker_event}
-  $\abs{P_0(E) - P_\mix(E)} \le \sqrt{1/16} = 1/4$. Since $A'$ is good, $P_\mix(E) \le 0.05$ (the
-  special batch is $u \ne 0$) and $P_0(N_u(\tau) \le T^\star, \text{output} \ne 0) \le 0.05$.
-  Hence $P_0(N_u(\tau) > T^\star) \ge 1 - 0.05 - 0.05 - 1/4 = 0.65$ and
-  $\E_0[N_u(\tau)] \ge 0.65\, (T^\star + 1) \ge \frac{\ln(1 + n/8)}{8\eps^2}$.
+  \leanok
+  Let $M = \lfloor \ln(1 + n/8)/(4\eps^2) \rfloor + 1 > \ln(1 + n/8)/(4\eps^2)$ and
+  $B = B(A', u, M)$ (Definition~\ref{def:stop_at_pulls}), which stops at the latest at its $M$-th
+  pull of batch $u$. Let $Q_\theta$ be the law of the output of $B$ under $S_\theta$ and
+  $Q_\mix = \frac1n \sum_{v \in [n]} Q_{(u, v)}$. The output of $B$ is a function of its observed
+  history up to its stopping time, which only uses the first $M$ records of batch $u$
+  (Definition~\ref{def:record}): by Lemma~\ref{lem:events_before_pulls}, the data processing
+  inequality, Lemma~\ref{lem:kl_bound} and Lemma~\ref{lem:two_batch_arith},
+  $\KL(Q_\mix \| Q_0) \le \KL(P_{\mix^M} \| P_0^M) \le \frac{(1 + 4\eps^2)^M - 1}{n} \le \frac14$,
+  and by Lemma~\ref{lem:pinsker_event}
+  $\abs{Q_0(\mathrm{true}) - Q_\mix(\mathrm{true})} \le \sqrt{1/8} \le 0.4$. Since $A'$ is good and
+  the special batch of $(u, v)$ is $u \ne 0$, Lemma~\ref{lem:stop_at_pulls_output} gives
+  $Q_{(u, v)}(\mathrm{true}) \le 0.05$ for every $v$, hence $Q_\mix(\mathrm{true}) \le 0.05$ and
+  $Q_0(\mathrm{true}) \le 0.45$. Since $A'$ outputs a batch other than $0$ with probability at most
+  $0.05$ under $S_0$, Lemma~\ref{lem:stop_at_pulls_output} gives
+  $P_0(N_u(\tau) < M) \le 0.45 + 0.05 = \frac12$. By Markov's inequality,
+  $\E_0[N_u(\tau)] \ge M\, P_0(N_u(\tau) \ge M) \ge \frac M2 \ge \frac{\ln(1 + n/8)}{8\eps^2}$.
+\end{proof}
+
+\begin{lemma}[Pulls and rounds]
+  \label{lem:pulls_le_rounds}
+  \lean{Chase2026Tight.sum_pullsBefore_le}
+  \leanok
+  For every (random) time $\tau$, $\sum_{u \in [k]} N_u(\tau) \le \tau$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Each round before $\tau$ is a pull of at most one batch $u \in [k]$.
 \end{proof}
 
 \begin{lemma}[Lower bound for the two-batch game, Lemma 4.2]
   \label{lem:two_batch}
   \lean{Chase2026Tight.expectedRounds_ge_of_isGood_one}
   \leanok
-  \uses{lem:two_batch_general}
+  \uses{lem:two_batch_general, lem:pulls_le_rounds}
   Suppose that $k = 1$, $0 < \eps \le 0.1$ and $n \ge 10$, and let $A'$ be good. Then
   $T(A', S_0) \ge \frac{\ln(n/10)}{8\eps^2}$.
 \end{lemma}
 
 \begin{proof}
-  The number of rounds is at least $N_1(\tau)$, and $\ln(n/10) \le \ln(1 + n/8)$;
-  Lemma~\ref{lem:two_batch_general}.
+  \leanok
+  The number of rounds is at least $N_1(\tau)$ (Lemma~\ref{lem:pulls_le_rounds}), and
+  $\ln(n/10) \le \ln(1 + n/8)$; Lemma~\ref{lem:two_batch_general}.
 \end{proof}
 
 \begin{remark}

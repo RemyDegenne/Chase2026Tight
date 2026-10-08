@@ -37,6 +37,8 @@ public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 public import Mathlib.Probability.Distributions.Bernoulli
 public import Mathlib.Probability.Distributions.Uniform
 public import Mathlib.Probability.Kernel.Composition.MeasureCompProd
+public import Mathlib.MeasureTheory.Integral.Prod
+public import Mathlib.Probability.Kernel.Composition.IntegralCompProd
 
 /-! # Standalone extraction for `Chase2026Tight.exists_isGood_expectedRounds_le`
 Definitions are copied verbatim; theorem proofs are replaced by `sorry`.
@@ -59,6 +61,8 @@ namespace ProbabilityTheory
 end ProbabilityTheory
 namespace ProbabilityTheory.Kernel
 end ProbabilityTheory.Kernel
+namespace ENNReal
+end ENNReal
 namespace Learning.Round
 end Learning.Round
 namespace Learning.IT

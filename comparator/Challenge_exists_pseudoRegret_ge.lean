@@ -34,6 +34,16 @@ public import Mathlib.Analysis.Calculus.LineDeriv.Basic
 public import Mathlib.Analysis.Convex.Function
 public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.PiProd
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
+public import Mathlib.MeasureTheory.Integral.Prod
+public import Mathlib.Probability.Kernel.Composition.IntegralCompProd
+public import Mathlib.Probability.Distributions.Bernoulli
+public import Mathlib.Probability.Distributions.Uniform
+public import Mathlib.Probability.Kernel.Composition.MeasureCompProd
+public import Mathlib.Topology.Algebra.InfiniteSum.ENNReal
+public import Mathlib.InformationTheory.KullbackLeibler.Basic
+public import Mathlib.MeasureTheory.Integral.Pi
+public import Mathlib.Probability.Kernel.Composition.WithDensity
+public import Mathlib.InformationTheory.KullbackLeibler.DataProcessing
 
 /-! # Standalone extraction for `Chase2026Tight.exists_pseudoRegret_ge`
 Definitions are copied verbatim; theorem proofs are replaced by `sorry`.
@@ -52,6 +62,8 @@ namespace Learning
 end Learning
 namespace ProbabilityTheory
 end ProbabilityTheory
+namespace ENNReal
+end ENNReal
 namespace Bandits
 end Bandits
 namespace Chase2026Tight
@@ -304,7 +316,7 @@ end
 -- ═══ Chase2026Tight.CIM2026.Theorem6_1 ═══
 @[expose] public section
 open MeasureTheory ProbabilityTheory Learning Bandits Real
-universe u
+universe u v w
 namespace Chase2026Tight
 
 /-- **Theorem 6.1** (Chase, Ito, Mehalel 2026). There is a universal constant `c > 0` such that
