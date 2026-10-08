@@ -168,7 +168,8 @@ lemma ofReal_le_lintegral_pullsBefore (hσρ : ∀ a, σ (ρ a) = a) (hττ' : �
   set S₀ := strategyOn σ ρ τ τ' ε Expert.zero with hS₀_def
   have hseq := h.isAlgEnvSeq
   have hNm : Measurable N := measurable_pullsBefore σ _ hseq.measurable_action
-    (IdentAlg.measurableSet_lt_stoppingTime hseq)
+    (IdentAlg.measurableSet_lt_stoppingTime hseq.measurable_obs hseq.measurable_action
+      hseq.measurable_feedback)
   -- goodness of `A'` under `S_0` and under `S_(u, v)`
   have hgood₀ : C.outputMeasure S₀ {Batch.zero}ᶜ ≤ ENNReal.ofReal 0.05 := by
     rw [← ofReal_measureReal]
@@ -275,7 +276,8 @@ lemma ofReal_le_lintegral_stoppingTime (hσρ : ∀ a, σ (ρ a) = a) (hττ' : 
           (A'.comapBanditFeedback.stoppingTime O X Y) ω ∂P :=
         (lintegral_finsetSum' _ fun u _ ↦
           (measurable_pullsBefore σ _ hseq.measurable_action
-            (IdentAlg.measurableSet_lt_stoppingTime hseq)).aemeasurable).symm
+            (IdentAlg.measurableSet_lt_stoppingTime hseq.measurable_obs hseq.measurable_action
+              hseq.measurable_feedback)).aemeasurable).symm
     _ ≤ ∫⁻ ω, (A'.comapBanditFeedback.stoppingTime O X Y ω : ℝ≥0∞) ∂P :=
         lintegral_mono fun ω ↦ sum_pullsBefore_le σ X _ ω
 

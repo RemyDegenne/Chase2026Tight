@@ -13,29 +13,13 @@ public import Mathlib.Probability.Process.HittingTime
 If a process does not visit `t` between the time `n` and its hitting time of `s` (included), then
 it hits `s ∪ t` at the same time as `s`.
 
-We also record that `WithTop.untopA t ≤ t`, so that the value of a process stopped at a time `t`
-is the value at a time at most `t`.
-
 ## Main statements
 
 * `MeasureTheory.hittingAfter_union_of_forall_notMem`: the hitting time of `s ∪ t` is the hitting
   time of `s` if the process does not visit `t` before.
-* `WithTop.coe_untopA_le`: `(t.untopA : WithTop α) ≤ t`.
 -/
 
 @[expose] public section
-
-namespace WithTop
-
-/-- The finite value `untopA t` of `t : WithTop α` (an arbitrary element if `t = ⊤`) is at most
-`t`. -/
-lemma coe_untopA_le {α : Type*} [Preorder α] [Nonempty α] (t : WithTop α) :
-    ((t.untopA : α) : WithTop α) ≤ t := by
-  cases t with
-  | top => exact le_top
-  | coe m => exact le_of_eq (by simp [WithTop.untopA])
-
-end WithTop
 
 namespace MeasureTheory
 

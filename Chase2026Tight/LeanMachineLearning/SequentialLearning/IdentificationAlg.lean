@@ -20,7 +20,8 @@ applied to the stopped history.
 
 * `Learning.IdentAlg.outputMeasure_apply_eq_lintegral`: `A.outputMeasure env s` is the integral
   of `A.output (A.stoppedHist O X Y ω) s` along any algorithm-environment sequence `O, X, Y`.
-* `Learning.IdentAlg.measurableSet_lt_stoppingTime`: the events `{t < τ}` are measurable.
+* `Learning.IdentAlg.measurable_stoppedHist`, `Learning.IdentAlg.measurableSet_lt_stoppingTime`:
+  measurability of the stopped history and of the events `{t < τ}`.
 -/
 
 @[expose] public section
@@ -35,21 +36,21 @@ variable {𝓞 𝓐 𝓨 𝓓 Ω : Type*} {m𝓞 : MeasurableSpace 𝓞} {m𝓐 
   {O : ℕ → Ω → 𝓞} {X : ℕ → Ω → 𝓐} {Y : ℕ → Ω → 𝓨} {A : IdentAlg 𝓞 𝓐 𝓨 𝓓}
   {env : Environment 𝓞 𝓐 𝓨} {P : Measure Ω}
 
-/-- The stopped history of an algorithm-environment sequence is measurable. -/
-lemma IdentAlg.measurable_stoppedHist [IsFiniteMeasure P] {alg : Algorithm 𝓞 𝓐 𝓨}
-    (h : IsAlgEnvSeq O X Y alg env P) :
+/-- The stopped history of measurable observation, action and feedback processes is
+measurable. -/
+lemma IdentAlg.measurable_stoppedHist (hO : ∀ n, Measurable (O n)) (hX : ∀ n, Measurable (X n))
+    (hY : ∀ n, Measurable (Y n)) :
     Measurable (A.stoppedHist O X Y) :=
-  measurable_stoppedValue_sigmaHistory h.measurable_obs h.measurable_action h.measurable_feedback
-    (measurable_hittingAfter_sigmaHistory h.measurable_obs h.measurable_action
-      h.measurable_feedback A.measurableSet_stopSet)
+  measurable_stoppedValue_sigmaHistory hO hX hY
+    (measurable_hittingAfter_sigmaHistory hO hX hY A.measurableSet_stopSet)
 
-/-- Along an algorithm-environment sequence, the events `{t < τ}` for the stopping time `τ` of an
-identification algorithm are measurable. -/
-lemma IdentAlg.measurableSet_lt_stoppingTime [IsFiniteMeasure P] {alg : Algorithm 𝓞 𝓐 𝓨}
-    (h : IsAlgEnvSeq O X Y alg env P) (t : ℕ) :
+/-- For measurable observation, action and feedback processes, the events `{t < τ}` for the
+stopping time `τ` of an identification algorithm are measurable. -/
+lemma IdentAlg.measurableSet_lt_stoppingTime (hO : ∀ n, Measurable (O n))
+    (hX : ∀ n, Measurable (X n)) (hY : ∀ n, Measurable (Y n)) (t : ℕ) :
     MeasurableSet {ω | (t : ℕ∞) < A.stoppingTime O X Y ω} :=
-  measurable_hittingAfter_sigmaHistory h.measurable_obs h.measurable_action
-    h.measurable_feedback A.measurableSet_stopSet (measurableSet_Ioi (a := (t : WithTop ℕ)))
+  measurable_hittingAfter_sigmaHistory hO hX hY A.measurableSet_stopSet
+    (measurableSet_Ioi (a := (t : WithTop ℕ)))
 
 /-- The probability that the output of `A` in `env` belongs to `s` is the expectation, along any
 algorithm-environment sequence of the sampling rule `A.alg` in `env`, of the probability of `s`
@@ -59,6 +60,7 @@ lemma IdentAlg.outputMeasure_apply_eq_lintegral [IsProbabilityMeasure P]
     A.outputMeasure env s = ∫⁻ ω, A.output (A.stoppedHist O X Y ω) s ∂P := by
   rw [IdentAlg.outputMeasure, Measure.bind_apply hs A.output.measurable.aemeasurable,
     ← (h.hasLaw_stoppedValue_sigmaHistory A.measurableSet_stopSet).map_eq]
-  exact lintegral_map (A.output.measurable_coe hs) (IdentAlg.measurable_stoppedHist h)
+  exact lintegral_map (A.output.measurable_coe hs)
+    (IdentAlg.measurable_stoppedHist h.measurable_obs h.measurable_action h.measurable_feedback)
 
 end Learning

@@ -18,7 +18,6 @@ import Chase2026Tight.LeanMachineLearning.Online.Bandit.Adversarial
 import Chase2026Tight.LeanMachineLearning.Online.Bandit.ExpertAdvice
 import Chase2026Tight.LeanMachineLearning.Online.Bandit.ExpertAdviceLaw
 import Chase2026Tight.LeanMachineLearning.Online.Convex.Regret
-import Chase2026Tight.LeanMachineLearning.SequentialLearning.CongrRun
 import Chase2026Tight.LeanMachineLearning.SequentialLearning.ExistsRun
 import Chase2026Tight.LeanMachineLearning.SequentialLearning.FactorsThrough
 import Chase2026Tight.LeanMachineLearning.SequentialLearning.HistMixture
@@ -33,9 +32,9 @@ import Chase2026Tight.Mathlib.InformationTheory.KullbackLeibler.Pinsker
 import Chase2026Tight.Mathlib.MeasureTheory.Integral.Pi
 import Chase2026Tight.Mathlib.MeasureTheory.MeasurableSpace.Constructions
 import Chase2026Tight.Mathlib.MeasureTheory.Measure.WithDensity
+import Chase2026Tight.Mathlib.Order.WithBot
 import Chase2026Tight.Mathlib.Probability.Distributions.Uniform
-import Chase2026Tight.Mathlib.Probability.Distributions.UniformPi
 import Chase2026Tight.Mathlib.Probability.HasCondDistrib
-import Chase2026Tight.Mathlib.Probability.HasCondDistribComp
+import Chase2026Tight.Mathlib.Probability.Kernel.Composition.MeasureComp
 import Chase2026Tight.Mathlib.Probability.Process.HittingTime
 import Chase2026Tight.Mathlib.Topology.Algebra.InfiniteSum.ENNReal

@@ -15,9 +15,13 @@ Updated as phase 2 proceeds.
     divergence, the KL divergence of a finite mixture of measures with densities;
   - `MeasureTheory/Measure/WithDensity.lean` (`Measure.pi_withDensity`, `withDensity_map`),
     `MeasureTheory/Integral/Pi.lean` (lintegral of products over `Measure.pi`);
-  - `Probability/HasCondDistrib.lean`, `Probability/HasCondDistribComp.lean` (two files from two
-    packages, to be merged), `Probability/Distributions/Uniform.lean`, `UniformPi.lean` (idem),
-    `Probability/Process/HittingTime.lean`, `Topology/Algebra/InfiniteSum/ENNReal.lean`.
+  - `Probability/HasCondDistrib.lean` (measure-preserving maps, composition-products, images
+    `F X Y`), `Probability/Kernel/Composition/MeasureComp.lean` (`Measure.comap_comp`),
+    `Probability/Distributions/Uniform.lean` (singletons, permutations, coordinates of uniform
+    functions), `Probability/Process/HittingTime.lean`, `Order/WithBot.lean`
+    (`WithTop.coe_untopA_le`), `Topology/Algebra/InfiniteSum/ENNReal.lean`.
+  - Reviewed against the Mathlib style, naming and documentation guides (2026-10-08): files
+    merged by topic, helpers private, measurability lemmas with measurability hypotheses only.
 
 ## LML
 
@@ -30,9 +34,9 @@ Updated as phase 2 proceeds.
 * Done in phase 2 (namespace `Learning` / `Bandits`):
   - `SequentialLearning/ObliviousEnv.lean`: conditional law of the feedback of environments that
     ignore the current action;
-  - `SequentialLearning/ExistsRun.lean` (runs of identification algorithms in a large universe) and
-    `CongrRun.lean` (runs in exactly `Type u` for finite spaces, relabelling along measurable
-    equivalences): two packages proved overlapping existence results, to be unified;
+  - `SequentialLearning/ExistsRun.lean`: transport of runs along measure-preserving maps, runs of
+    identification algorithms in a large universe, relabelling along measurable equivalences and
+    runs in exactly `Type w` (`exists_isAlgEnvSeq_of_measurableEquiv`, `_of_finite`);
   - `SequentialLearning/RunTransport.lean` (partial feedback and relabelled runs, their output
     laws), `StoppedHistLaw.lean` (the law of the stopped history is determined by the histories
     before stopping), `HistMixture.lean` (trajectory laws that factor through a mixing measure),

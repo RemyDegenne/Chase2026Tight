@@ -4,7 +4,7 @@
 \begin{lemma}[KL divergence and $\chi^2$ divergence]
   \label{lem:klDiv_le_chiSq}
   \lean{InformationTheory.klDiv_le_lintegral_rnDeriv_sq_sub_one,
-    InformationTheory.klFun_le_sq_sub_one, InformationTheory.klDiv_withDensity_le}
+    InformationTheory.klFun_le_sub_one_sq, InformationTheory.klDiv_withDensity_le}
   \leanok
   For probability measures $\mu \ll \nu$,
   $\KL(\mu \| \nu) \le \int \big(\frac{d\mu}{d\nu}\big)^2 d\nu - 1$ (the $\chi^2$ divergence). In

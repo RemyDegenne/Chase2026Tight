@@ -5,8 +5,8 @@ Authors: Rémy Degenne
 -/
 module
 
-public import Mathlib.InformationTheory.KullbackLeibler.Basic
 public import LeanMachineLearning.ForMathlib.InformationTheory.KullbackLeibler.Restrict
+public import Mathlib.InformationTheory.KullbackLeibler.Basic
 
 /-!
 # Pinsker's inequality for events
@@ -26,6 +26,10 @@ For probability measures `P`, `Q` and a measurable event `E`,
 * `InformationTheory.ofReal_mul_log_div_add_mul_log_div_le_klDiv`: the divergence between the
   Bernoulli laws of parameters `P(E)` and `Q(E)` is at most `KL(P ‖ Q)`.
 * `InformationTheory.ofReal_two_mul_sq_measureReal_sub_le_klDiv`: Pinsker's inequality for events.
+
+## Tags
+
+Pinsker's inequality, Kullback-Leibler divergence, Bernoulli distribution
 -/
 
 @[expose] public section

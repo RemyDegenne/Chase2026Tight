@@ -25,6 +25,10 @@ expectation under `P i` of the likelihood ratio `dP j/dν`.
 * `InformationTheory.klDiv_withDensity_le`: `KL(ν.withDensity f ‖ ν) ≤ ∫ f² dν - 1`.
 * `InformationTheory.klDiv_sum_smul_withDensity_le`: the bound for a finite mixture,
   `KL(∑ i, w i • P i ‖ ν) ≤ ∑ i, ∑ j, w i * w j * ∫ f j dP i - 1`.
+
+## Tags
+
+Kullback-Leibler divergence, chi-squared divergence, mixture
 -/
 
 @[expose] public section
@@ -37,7 +41,7 @@ namespace InformationTheory
 variable {α : Type*} {mα : MeasurableSpace α} {μ ν : Measure α}
 
 /-- `klFun x = x log x + 1 - x` is at most `(x - 1)²` for `x ≥ 0`. -/
-lemma klFun_le_sq_sub_one {x : ℝ} (hx : 0 ≤ x) : klFun x ≤ (x - 1) ^ 2 := by
+lemma klFun_le_sub_one_sq {x : ℝ} (hx : 0 ≤ x) : klFun x ≤ (x - 1) ^ 2 := by
   rw [klFun_apply]
   rcases hx.eq_or_lt with rfl | hx
   · simp
@@ -45,7 +49,7 @@ lemma klFun_le_sq_sub_one {x : ℝ} (hx : 0 ≤ x) : klFun x ≤ (x - 1) ^ 2 := 
   nlinarith
 
 /-- For a finite `x : ℝ≥0∞`, `(x - 1)² + 2 x = x² + 1`. -/
-lemma _root_.ENNReal.ofReal_sq_toReal_sub_one_add_two_mul {x : ℝ≥0∞} (hx : x ≠ ∞) :
+private lemma ofReal_sq_toReal_sub_one_add_two_mul {x : ℝ≥0∞} (hx : x ≠ ∞) :
     ENNReal.ofReal ((x.toReal - 1) ^ 2) + 2 * x = x ^ 2 + 1 := by
   lift x to NNReal using hx
   rw [← ENNReal.ofReal_coe_nnreal]
@@ -64,7 +68,7 @@ lemma klDiv_le_lintegral_rnDeriv_sq_sub_one [IsProbabilityMeasure μ] [IsProbabi
   rw [klDiv_eq_lintegral_klFun_of_ac hμν]
   have h_le : ∫⁻ x, ENNReal.ofReal (klFun (μ.rnDeriv ν x).toReal) ∂ν ≤
       ∫⁻ x, ENNReal.ofReal (((μ.rnDeriv ν x).toReal - 1) ^ 2) ∂ν :=
-    lintegral_mono fun x ↦ ENNReal.ofReal_le_ofReal (klFun_le_sq_sub_one ENNReal.toReal_nonneg)
+    lintegral_mono fun x ↦ ENNReal.ofReal_le_ofReal (klFun_le_sub_one_sq ENNReal.toReal_nonneg)
   refine h_le.trans (ENNReal.le_sub_of_add_le_right ENNReal.one_ne_top ?_)
   have h_eq : ∫⁻ x, ENNReal.ofReal (((μ.rnDeriv ν x).toReal - 1) ^ 2) ∂ν + 2 =
       ∫⁻ x, μ.rnDeriv ν x ^ 2 ∂ν + 1 := by
@@ -75,7 +79,7 @@ lemma klDiv_le_lintegral_rnDeriv_sq_sub_one [IsProbabilityMeasure μ] [IsProbabi
     rw [h2, h1, ← lintegral_add_right _ (by fun_prop), ← lintegral_add_right _ (by fun_prop)]
     refine lintegral_congr_ae ?_
     filter_upwards [Measure.rnDeriv_ne_top μ ν] with x hx
-    exact ENNReal.ofReal_sq_toReal_sub_one_add_two_mul hx
+    exact ofReal_sq_toReal_sub_one_add_two_mul hx
   have h_two : (2 : ℝ≥0∞) = 1 + 1 := by norm_num
   rw [h_two, ← add_assoc] at h_eq
   exact ((ENNReal.add_left_inj ENNReal.one_ne_top).mp h_eq).le

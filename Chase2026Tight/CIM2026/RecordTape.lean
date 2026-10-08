@@ -7,7 +7,7 @@ module
 
 public import Chase2026Tight.CIM2026.ReducedRun
 public import Chase2026Tight.LeanMachineLearning.SequentialLearning.HistMixture
-public import Chase2026Tight.Mathlib.Probability.Distributions.UniformPi
+public import Chase2026Tight.Mathlib.Probability.Distributions.Uniform
 
 /-!
 # Pull records and the tape representation of the runs

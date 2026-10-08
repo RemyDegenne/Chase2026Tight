@@ -8,6 +8,7 @@ module
 public import Chase2026Tight.CIM2026.Embedding
 public import Chase2026Tight.LeanMachineLearning.Online.Bandit.Adversarial
 public import Chase2026Tight.LeanMachineLearning.SequentialLearning.IdentificationAlg
+public import Chase2026Tight.Mathlib.Order.WithBot
 public import Chase2026Tight.Mathlib.Probability.Process.HittingTime
 
 /-!
@@ -253,11 +254,12 @@ lemma measure_le_outputMeasure_stopAtPulls_add {Ω : Type*} {_mΩ : MeasurableSp
         A.comapBanditFeedback.outputMeasure env {Batch.zero}ᶜ := by
   have hD : Measurable fun ω ↦ (stopAtPulls σ u M A).comapBanditFeedback.output
       ((stopAtPulls σ u M A).comapBanditFeedback.stoppedHist O X Y ω) {true} :=
-    (Kernel.measurable_coe _ (measurableSet_singleton _)).comp (IdentAlg.measurable_stoppedHist h)
+    (Kernel.measurable_coe _ (measurableSet_singleton _)).comp
+      (IdentAlg.measurable_stoppedHist h.measurable_obs h.measurable_action h.measurable_feedback)
   have hC : Measurable fun ω ↦ A.comapBanditFeedback.output
       (A.comapBanditFeedback.stoppedHist O X Y ω) {Batch.zero}ᶜ :=
     (Kernel.measurable_coe _ (measurableSet_singleton _).compl).comp
-      (IdentAlg.measurable_stoppedHist h)
+      (IdentAlg.measurable_stoppedHist h.measurable_obs h.measurable_action h.measurable_feedback)
   rw [IdentAlg.outputMeasure_apply_eq_lintegral (A := (stopAtPulls σ u M A).comapBanditFeedback) h
       (measurableSet_singleton _),
     IdentAlg.outputMeasure_apply_eq_lintegral h (measurableSet_singleton _).compl,
