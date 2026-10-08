@@ -1,0 +1,86 @@
+\chapter{Sequential learning}
+\label{chap:prereq_sequential}
+
+\section{Adversaries that move simultaneously with the learner}
+
+\begin{lemma}[Feedback independent of the current action]
+  \label{lem:feedback_ignores_action_cond}
+  \uses{def:protocol}
+  If an environment satisfies \texttt{FeedbackIgnoresAction}, with feedback kernels
+  $\kappa_t(h, o)$ depending on the history $h$ and the observation $o$ of round $t$, then in every
+  run the feedback of round $t$ has conditional law $\kappa_t(H_t, O_t)$ given the history $H_t$,
+  the observation $O_t$ and the action $X_t$ of round $t$; in particular it is conditionally
+  independent of $X_t$ given $(H_t, O_t)$.
+\end{lemma}
+
+\begin{proof}
+  The conditional law of the feedback given $(H_t, O_t, X_t)$ is the feedback kernel of the
+  environment (LML's \texttt{IsAlgEnvSeq}), which factors through $(H_t, O_t)$.
+\end{proof}
+
+\section{Representation of the runs by pull records}
+
+Fix $k, n$, $0 < \eps \le 0.1$ and a batch $u \in [k]$. A \emph{pull record} of batch $u$ is a
+pair $(a, c)$ of advice bits $a \in \{0,1\}^{[n]}$ of batch $u$ and a correct arm $c \in \{0, 1\}$.
+
+\begin{definition}[Law of the records]
+  \label{def:record}
+  \uses{def:strategy}
+  $\rho^u_\theta$ is the law of a record of batch $u$ under $S_\theta$: $a$ uniform and, given $a$,
+  $c$ uniform if $\theta$ is not an expert of batch $u$, and $c = a_v$ with probability
+  $1/2 + \eps$ if $\theta = (u, v)$. It is the image, by the projection on the advice and the
+  correct arm of the batch, of the law $P_{\theta'}$ of a round of the two-batch game, where
+  $\theta' = (1, v)$ if $\theta = (u, v)$ and $\theta' = 0$ otherwise.
+\end{definition}
+
+\begin{lemma}[Pathwise realization of algorithms]
+  \label{lem:algorithm_realization}
+  An algorithm whose action space is finite can be run on a probability space carrying i.i.d.\
+  uniform variables $(U_t)$ independent of the environment's randomness: there are measurable maps
+  $\phi_t$ with $X_t = \phi_t(H_t, O_t, U_t)$, and likewise for the output rule of an
+  identification algorithm with a finite output space.
+\end{lemma}
+
+\begin{proof}
+  Inverse of the cumulative distribution function, for a finite space enumerated in a fixed order.
+\end{proof}
+
+\begin{lemma}[Record representation]
+  \label{lem:record_representation}
+  \uses{def:record, lem:algorithm_realization, lem:loss_law_cond}
+  For every learner (or SBI algorithm) and every $\theta$, there is a probability space carrying
+  independent families: i.i.d.\ record sequences $(R^{u'}_j)_{j \ge 1}$ of law $\rho^{u'}_\theta$ for
+  every batch $u'$, i.i.d.\ losses of arm $0$, the randomness of the unobserved losses, and the
+  learner's randomness, all but the records with laws not depending on $\theta$, and a run of the
+  learner against $S_\theta$ whose observed history (advice, arms, observed losses, output) is a
+  measurable function, not depending on $\theta$, of these variables. In the $j$-th pull of batch
+  $u'$, the advice and the correct arm of batch $u'$ are those of $R^{u'}_j$. By the uniqueness of
+  the law of a run (LML's \texttt{isAlgEnvSeq\_unique}), the observed history of every run against
+  $S_\theta$ has the law of this representation.
+\end{lemma}
+
+\begin{proof}
+  Build the advice of batch $u'$ in a round as the advice of the record of its next pull, the
+  correct arm of a pulled batch from its record, the other losses from the independent randomness
+  through \texttt{lossOf}, and the arms with Lemma~\ref{lem:algorithm_realization}. Since the advice
+  of batch $u'$ is redrawn exactly after its pulls, the conditional laws of the observations and
+  feedbacks given the past are those of $S_\theta$: the process is a run.
+\end{proof}
+
+\begin{lemma}[Events before the $T^\star$-th pull]
+  \label{lem:events_before_pulls}
+  \uses{lem:record_representation}
+  Let $T^\star \in \N$ and $E$ an event of the observed history up to the stopping time $\tau$ of an
+  SBI algorithm. For $\theta \in \{0\} \cup \{(u, v) : v \in [n]\}$, the probability of
+  $E \cap \{N_u(\tau) \le T^\star\}$ under $S_\theta$ is
+  $(\rho^{u, T^\star}_\theta \otimes \mu)(F)$ for a measurable set $F$ and a law $\mu$ that do not
+  depend on $\theta$, where $\rho^{u, T^\star}_\theta = (\rho^u_\theta)^{T^\star}$ is the law of the
+  first $T^\star$ records of batch $u$.
+\end{lemma}
+
+\begin{proof}
+  On $\{N_u(\tau) \le T^\star\}$ the observed history only uses the first $T^\star$ records of batch
+  $u$ and the advice part of record $T^\star + 1$, which is uniform under every $\theta$ and
+  independent of the first $T^\star$ records; the records of the other batches have law
+  $\rho^{u'}_0$ for these $\theta$. Take $\mu$ the law of all the other variables.
+\end{proof}

@@ -1,0 +1,98 @@
+\chapter{The setting (Sections 1--3)}
+\label{chap:setting}
+
+\section{Bandits with expert advice}
+
+\begin{definition}[Protocol]
+  \label{def:protocol}
+  \lean{Learning.Algorithm.comapBanditFeedback, Learning.Environment.FeedbackIgnoresAction,
+    Learning.Environment.FeedbackIn}
+  \leanok
+  Let $\iota$ be a finite set of experts and $\alpha$ a finite set of arms. A \emph{learner} is an
+  algorithm whose observation in round $t$ is the advice $e_t : \iota \to \alpha$, whose action is
+  the arm $I_t \in \alpha$ and whose feedback is the loss $\ell_t(I_t)$ of the pulled arm. An
+  \emph{(adaptive) adversary} is an environment whose observation is the advice and whose feedback
+  is the loss vector $\ell_t : \alpha \to \R$; the learner observes only the loss of the pulled arm
+  (it runs as \texttt{alg.comapBanditFeedback}). The adversary sees the past arms of the learner,
+  but the losses of round $t$ do not depend on the arm of round $t$
+  (\texttt{FeedbackIgnoresAction}). Its losses are in $\{0,1\}$ if the loss vectors are almost
+  surely in $\{0,1\}^\alpha$ (\texttt{FeedbackIn}).
+\end{definition}
+
+\begin{definition}[Pseudo-regret]
+  \label{def:pseudo_regret}
+  \lean{Bandits.expertPseudoRegret, Bandits.diracAdvice}
+  \leanok
+  \uses{def:protocol}
+  The pseudo-regret of a run after $T$ rounds is
+  $R_T = \max_{j \in \iota} \E\big[\sum_{t < T} \ell_t(I_t) - \ell_t(e_t(j))\big]$, written in Lean
+  with the Dirac advice vectors of the deterministic advice.
+\end{definition}
+
+\section{The reduced setting (Section 2)}
+
+\begin{definition}[Arms, experts and batches]
+  \label{def:arm}
+  \lean{Chase2026Tight.Arm, Chase2026Tight.Expert, Chase2026Tight.Batch,
+    Chase2026Tight.specialBatch}
+  \leanok
+  Let $k, n \in \N$. The arms are $\Arm_k = \{0\} \cup ([k] \times \{0, 1\})$, the experts
+  $\Exp_{k,n} = \{0\} \cup ([k] \times [n])$, the batches $\Bat_k = \{0\} \cup [k]$; the arms
+  $(u, b)$ and the experts $(u, v)$ belong to batch $u$, arm $0$ and expert $0$ to batch $0$. The
+  \emph{special batch} of $\theta \in \Exp_{k,n}$ is its batch.
+\end{definition}
+
+\begin{definition}[Advice process]
+  \label{def:advice}
+  \lean{Chase2026Tight.adviceOf, Chase2026Tight.uniformBits, Chase2026Tight.nextAdvice,
+    Chase2026Tight.adviceKernel, Chase2026Tight.initAdvice}
+  \leanok
+  \uses{def:arm}
+  The advice is given by bits $a^{(u,v)} \in \{0,1\}$: expert $(u, v)$ advises arm
+  $(u, a^{(u,v)})$, expert $0$ advises arm $0$. The bits are initially uniform. After a round in
+  which an arm of batch $u$ is pulled, the bits of batch $u$ are redrawn uniformly; the bits of
+  the other batches are kept.
+\end{definition}
+
+\begin{definition}[Losses and strategies]
+  \label{def:strategy}
+  \lean{Chase2026Tight.bern, Chase2026Tight.lossRandomness, Chase2026Tight.correctArm,
+    Chase2026Tight.lossOf, Chase2026Tight.lossLaw, Chase2026Tight.lossKernel,
+    Chase2026Tight.strategy, Chase2026Tight.strategy_feedbackIgnoresAction,
+    Chase2026Tight.roundLaw}
+  \leanok
+  \uses{def:advice, def:protocol}
+  Let $0 < \eps \le 0.1$. In every round, $\ell_t(0) \sim \Ber(1/2 - \eps/2)$ and in every batch
+  $u$ exactly one of the two arms, the \emph{correct arm}, has loss $0$. Under the strategy $S_0$
+  the correct arm of every batch is uniform; under $S_{(u^\star, v^\star)}$ the arm advised by
+  $(u^\star, v^\star)$ is correct with probability $1/2 + \eps$, and the other batches are as
+  under $S_0$. All these variables are independent of each other and of the past. The adversary
+  $S_\theta$ (\texttt{strategy ε θ}) has the advice process of Definition~\ref{def:advice} as
+  observations and these loss vectors as feedbacks; it does not use the arm of the current round.
+  $P_\theta$ (\texttt{roundLaw ε θ}) is the law of the advice and losses of a round with fresh
+  advice.
+\end{definition}
+
+\section{Special batch identification (Section 3)}
+
+\begin{definition}[SBI algorithms]
+  \label{def:sbi}
+  \lean{Chase2026Tight.SBIAlg, Chase2026Tight.SBIAlg.toIdentAlg, Learning.IdentAlg,
+    Learning.IdentAlg.stoppingTime, Learning.IdentAlg.IsRun}
+  \leanok
+  \uses{def:strategy}
+  An algorithm for \emph{special batch identification} (SBI) is an identification algorithm in the
+  setting of the bandit with expert advice: a sampling rule (a learner), a stopping rule and an
+  output rule with values in the batches. It stops at a random round and outputs a batch.
+\end{definition}
+
+\begin{definition}[Good SBI algorithms, expected number of rounds]
+  \label{def:is_good}
+  \lean{Chase2026Tight.IsGood, Chase2026Tight.expectedRounds, Learning.IdentAlg.IsPAC}
+  \leanok
+  \uses{def:sbi}
+  An SBI algorithm $A'$ is \emph{good} if, under every strategy $S_\theta$ of the pool, it outputs
+  the special batch of $\theta$ with probability at least $0.95$. $T(A', S)$ is the expected number
+  of rounds played by $A'$ before stopping when the adversary uses $S$ (infinite if $A'$ does not
+  stop almost surely).
+\end{definition}

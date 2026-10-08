@@ -1,0 +1,40 @@
+name = "Chase2026Tight"
+defaultTargets = ["Chase2026Tight"]
+lintDriver = "batteries/runLinter"
+
+[leanOptions]
+pp.unicode.fun = true
+autoImplicit = false
+relaxedAutoImplicit = false
+weak.linter.mathlibStandardSet = true
+
+[[require]]
+name = "LeanMachineLearning"
+git = "https://github.com/LeanMachineLearning/LML"
+rev = "rename"
+
+[[require]]
+name = "checkdecls"
+git = "https://github.com/PatrickMassot/checkdecls.git"
+
+[[lean_lib]]
+name = "Chase2026Tight"
+
+# Comparator (https://github.com/leanprover/comparator) challenge/solution modules for the
+# headline results listed in formalization.yaml; see comparator/README.md. One library with a
+# stub root: tools that import every library root (checkdecls, referee) must not load the
+# challenge modules, which redeclare project and LML names, so those are globs, not roots.
+# Add one "Challenge_<name>" entry per line of comparator/targets.txt.
+[[lean_lib]]
+name = "Comparator"
+srcDir = "comparator"
+leanOptions = { weak.linter.mathlibStandardSet = false }
+globs = [
+  "Comparator",
+  "Solution",
+  "Challenge_exists_isGood_expectedRounds_le",
+  "Challenge_klDiv_mixture_pi_roundLaw_le",
+  "Challenge_expectedRounds_ge_of_isGood_one",
+  "Challenge_expectedRounds_ge_of_isGood",
+  "Challenge_exists_pseudoRegret_ge",
+]

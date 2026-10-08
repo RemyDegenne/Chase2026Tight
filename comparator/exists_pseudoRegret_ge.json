@@ -1,0 +1,17 @@
+{
+    "challenge_module": "Challenge_exists_pseudoRegret_ge",
+    "solution_module": "Solution",
+    "theorem_names": [
+        "Chase2026Tight.exists_pseudoRegret_ge",
+        "Bandits.measurable_banditFeedback",
+        "Learning.Environment.FeedbackIgnoresAction._proof_1",
+        "Learning.Algorithm.comap._proof_1",
+        "Learning.Algorithm.comapPartialFeedback._proof_1",
+        "Bandits.diracAdvice._proof_1"
+    ],
+    "permitted_axioms": [
+        "propext",
+        "Quot.sound",
+        "Classical.choice"
+    ]
+}

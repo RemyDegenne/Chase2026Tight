@@ -1,0 +1,54 @@
+\chapter{The lower bound for bandits with expert advice (Section 6)}
+\label{chap:main}
+
+\begin{definition}[Embedding of the reduced setting]
+  \label{def:embedding}
+  \uses{def:strategy}
+  Let $K \ge 3$ and $N \ge 2K$, $k = \lfloor (K - 1)/2 \rfloor \ge 1$ and
+  $n = \lfloor (N - 1)/k \rfloor \ge 1$. Embed $\Arm_k$ into $[K]$ and $\Exp_{k,n}$ into $[N]$. The
+  strategy $S_\theta$ on $[K]$ and $[N]$ gives loss $1$ to the extra arms and the advice of
+  expert $0$ to the extra experts.
+\end{definition}
+
+\begin{lemma}[Reduction in the embedded setting]
+  \label{lem:reduction_ext}
+  \uses{def:embedding, lem:reduction, lem:many_batches_general}
+  Lemmas~\ref{lem:reduction} and~\ref{lem:many_batches_general} hold for learners and SBI
+  algorithms on $[K]$ and $[N]$ against the embedded strategies.
+\end{lemma}
+
+\begin{proof}
+  An extra arm has loss $1$, so its per-round regret against the special expert is at least
+  $\eps/2$ (Lemma~\ref{lem:per_round_regret}); pulling it carries no information on the special
+  batch, so the record representation (Lemma~\ref{lem:record_representation}) is unchanged.
+\end{proof}
+
+\begin{theorem}[Main lower bound, Theorem 6.1]
+  \label{thm:main}
+  \lean{Chase2026Tight.exists_pseudoRegret_ge}
+  \leanok
+  \uses{lem:reduction_ext}
+  There is a universal constant $c > 0$ such that for all $K \ge 3$, $N \ge 2K$ and
+  $T \ge K \ln(N/K)$, and every learner for the bandit with expert advice, there is an adaptive
+  adversary with losses in $\{0, 1\}$ under which the pseudo-regret of the learner after $T$ rounds
+  is at least $c \sqrt{T K \log(N/K)}$.
+\end{theorem}
+
+\begin{proof}
+  Let $k, n$ as in Definition~\ref{def:embedding}, $L = \ln(1 + n/8)$ and
+  $\eps = \sqrt{k L / (50 T)}$. Since $n \le 4N/K$, $L \le \ln(1 + N/(2K)) \le \ln(N/K)$ and
+  $k L \le \frac{K}{2} \ln(N/K) \le T/2$, so $\eps \le 0.1$. Suppose that the pseudo-regret of the
+  learner is at most $r(T) = \sqrt{T k L}/C$ under every strategy of the pool. Then
+  $1000\, r(T)/\eps \le T$ for $C$ large, and Lemma~\ref{lem:reduction_ext} gives a good SBI
+  algorithm with at most $T$ rounds in expectation, while Lemma~\ref{lem:many_batches_general} gives
+  at least $k L/(8\eps^2) = 50T/8 > T$: a contradiction. So some strategy gives pseudo-regret
+  $R_T > \sqrt{T k L}/C$. Finally $k \ge K/4$, and $L \ge \frac14 \ln(N/K)$ since $n \ge N/K \ge 2$.
+\end{proof}
+
+\begin{remark}
+  \label{rem:main_k}
+  The paper states Theorem~\ref{thm:main} for positive $K$. It is false for $K = 1$ (with one arm
+  the pseudo-regret of every learner is $0$), and the proof needs $K \ge 3$ (one batch at least).
+  The paper also assumes without loss of generality that $n > 10$, which fails when $N/K$ is
+  small; Lemma~\ref{lem:many_batches_general}, valid for every $n \ge 1$, removes this assumption.
+\end{remark}

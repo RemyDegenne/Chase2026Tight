@@ -1,0 +1,18 @@
+{
+    "challenge_module": "Challenge_klDiv_mixture_pi_roundLaw_le",
+    "solution_module": "Solution",
+    "theorem_names": [
+        "Chase2026Tight.klDiv_mixture_pi_roundLaw_le",
+        "Chase2026Tight.uniformBits._proof_1",
+        "Chase2026Tight.lossKernel._proof_1",
+        "Chase2026Tight.lossKernel._proof_2",
+        "Chase2026Tight.bern._proof_1",
+        "Chase2026Tight.lossRandomness._proof_1",
+        "Chase2026Tight.lossRandomness._proof_2"
+    ],
+    "permitted_axioms": [
+        "propext",
+        "Quot.sound",
+        "Classical.choice"
+    ]
+}

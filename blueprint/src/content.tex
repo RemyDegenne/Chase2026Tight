@@ -1,0 +1,46 @@
+% In this file you should put the actual content of the blueprint.
+% It will be used both by the web and the print version.
+% It should *not* include the \begin{document}
+
+\part{A tight lower bound for bandits with expert advice}
+\label{part:main}
+
+\textbf{Overview}
+
+This blueprint guides the Lean formalization of the paper \emph{A Tight Lower Bound for
+Non-stochastic Multi-armed Bandits with Expert Advice} by Zachary Chase, Shinji Ito and Idan
+Mehalel (COLT 2026, \cite{chase2026tight}). In the \emph{bandit with expert advice} (BwE), at each
+round $t$ each of $N$ experts advises one of $K$ arms, the learner pulls an arm $I_t$ and the
+adversary simultaneously assigns losses $\ell_t(r) \in \{0, 1\}$ to the arms; the learner only
+observes $\ell_t(I_t)$, and the adversary may adapt to the past arms of the learner. The paper
+proves that for $N \ge 2K$ the minimax pseudo-regret against the best expert is
+$\Omega(\sqrt{T K \log(N/K)})$, matching the upper bound of \cite{kale2014multiarmed}
+(Theorem~\ref{thm:main}). The proof reduces the identification of a \emph{special batch} of experts
+(SBI) to regret minimization (Lemma~\ref{lem:reduction}), bounds a Kullback--Leibler divergence
+between a mixture of product laws and a product law (Lemma~\ref{lem:kl_bound}, from
+\cite{ito2024minimax}), deduces a lower bound on the number of rounds of a good SBI algorithm with
+one batch (Lemma~\ref{lem:two_batch}) and then with $k$ batches (Lemma~\ref{lem:many_batches}).
+
+\textbf{Formalization.} The protocol is that of the \emph{Lean Machine Learning} library (LML):
+learners are LML algorithms whose observation is the advice, whose action is the arm and whose
+feedback is the loss of the pulled arm, and adversaries are LML environments whose feedback is the
+loss vector; SBI algorithms are LML identification algorithms. The statements were checked against
+the paper; two of them are corrected (Remarks~\ref{rem:reduction_t_pos} and~\ref{rem:main_k}), and
+a gap of the proof of Theorem~\ref{thm:main} (the case of few experts per batch) is closed by a
+stronger form of Lemmas~\ref{lem:two_batch} and~\ref{lem:many_batches}
+(Lemmas~\ref{lem:two_batch_general} and~\ref{lem:many_batches_general}). The lower bounds on the
+number of rounds are proved through a representation of the runs by i.i.d.\ \emph{pull records}
+(Lemma~\ref{lem:record_representation}), which also replaces the simulation argument of the
+paper's proof of Lemma~\ref{lem:many_batches}.
+
+\input{chapters/setting.tex}
+\input{chapters/reduction.tex}
+\input{chapters/two_batch.tex}
+\input{chapters/many_batches.tex}
+\input{chapters/main.tex}
+
+\part{Prerequisites to be added to Mathlib and LML}
+\label{part:prereq}
+
+\input{chapters/prereq_information.tex}
+\input{chapters/prereq_sequential.tex}

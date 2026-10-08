@@ -1,0 +1,95 @@
+\chapter{The two-batch game (Section 4)}
+\label{chap:two_batch}
+
+In the two-batch game, $k = 1$: arm $0$ and the two arms of batch $1$, expert $0$ and the experts
+$(1, v)$, $v \in [n]$. For a law $P$, $P^T$ is the law of $T$ independent draws from $P$, and
+$P_{\mix^T} = \frac1n \sum_{v \in [n]} P_{(1,v)}^T$.
+
+\begin{lemma}[Density of a round]
+  \label{lem:roundLaw_withDensity}
+  \uses{def:strategy}
+  $P_{(1,v)}$ has density $f_v(g) = 1 + (2 c_v(g) - 1)\, 2\eps$ with respect to $P_0$, where
+  $c_v(g) = 1$ if the correct arm of batch $1$ in the round $g$ is the arm advised by $(1, v)$ and
+  $c_v(g) = 0$ otherwise.
+\end{lemma}
+
+\begin{proof}
+  The advice and the loss of arm $0$ have the same law under both; given the advice, the correct
+  arm is the advised one with probability $1/2 + \eps$ under $P_{(1,v)}$ and $1/2$ under $P_0$.
+\end{proof}
+
+\begin{lemma}[Expected likelihood ratios]
+  \label{lem:integral_ratio}
+  \uses{lem:roundLaw_withDensity, lem:pi_withDensity}
+  For $v, v^\star \in [n]$, $\int \prod_{t < T} f_v(g_t) \, dP_{(1,v^\star)}^T(g)$ is $1$ if
+  $v \ne v^\star$ and $(1 + 4\eps^2)^T$ if $v = v^\star$.
+\end{lemma}
+
+\begin{proof}
+  The integral of a product of functions of independent coordinates is the product of the
+  integrals. Under $P_{(1,v^\star)}$, the bit of $v \ne v^\star$ is uniform and independent of the
+  correct arm, so $\E[f_v] = 1$; for $v = v^\star$, $c_v \sim \Ber(1/2 + \eps)$ and
+  $\E[f_v] = 1 + 4\eps^2$.
+\end{proof}
+
+\begin{lemma}[KL bound, Lemma 4.1]
+  \label{lem:kl_bound}
+  \lean{Chase2026Tight.klDiv_mixture_pi_roundLaw_le}
+  \leanok
+  \uses{lem:klDiv_mixture_le, lem:integral_ratio}
+  If $0 < \eps \le 0.1$, then for all $T \ge 1$ and $n \ge 1$,
+  $\KL(P_{\mix^T} \,\|\, P_0^T) \le \frac{(1 + 4\eps^2)^T - 1}{n}$.
+\end{lemma}
+
+\begin{proof}
+  By Lemma~\ref{lem:klDiv_mixture_le} with weights $1/n$ and Lemma~\ref{lem:integral_ratio},
+  $\KL(P_{\mix^T} \| P_0^T) \le \frac1n \sum_{v^\star} \log\big(\frac{n - 1 + (1 + 4\eps^2)^T}{n}\big)
+  = \log\big(1 + \frac{(1 + 4\eps^2)^T - 1}{n}\big) \le \frac{(1 + 4\eps^2)^T - 1}{n}$.
+\end{proof}
+
+\begin{lemma}[One batch of a general game]
+  \label{lem:two_batch_general}
+  \uses{lem:kl_bound, lem:events_before_pulls, lem:pinsker_event, def:is_good, def:record}
+  Let $k \ge 1$, $n \ge 1$, $0 < \eps \le 0.1$, $u \in [k]$ and $A'$ a good SBI algorithm. Then
+  $\E_{S_0}[N_u(\tau)] \ge \frac{\ln(1 + n/8)}{8 \eps^2}$, where $\tau$ is the number of rounds
+  played by $A'$.
+\end{lemma}
+
+\begin{proof}
+  Let $T^\star = \lfloor \ln(1 + n/8)/(4\eps^2) \rfloor$, so that
+  $\frac{(1 + 4\eps^2)^{T^\star} - 1}{n} \le \frac{e^{4\eps^2 T^\star} - 1}{n} \le \frac18$. Let $E$
+  be the event that $N_u(\tau) \le T^\star$ and $A'$ outputs batch $0$, and $P_\mix$ the law of the
+  run under the strategy $S_{(u, v)}$ with $v$ uniform. By Lemma~\ref{lem:events_before_pulls},
+  $P_0(E)$ and $P_\mix(E)$ are the probabilities of the same event under $\rho_0^{u, T^\star} \otimes \mu$
+  and $\rho_{\mix}^{u, T^\star} \otimes \mu$ for some law $\mu$ (Definition~\ref{def:record}). The
+  records are images of the rounds of the two-batch game, so by the data processing inequality
+  and Lemma~\ref{lem:kl_bound},
+  $\KL(\rho_{\mix}^{u, T^\star} \otimes \mu \| \rho_0^{u, T^\star} \otimes \mu) \le
+  \KL(P_{\mix^{T^\star}} \| P_0^{T^\star}) \le \frac18$, and by Lemma~\ref{lem:pinsker_event}
+  $\abs{P_0(E) - P_\mix(E)} \le \sqrt{1/16} = 1/4$. Since $A'$ is good, $P_\mix(E) \le 0.05$ (the
+  special batch is $u \ne 0$) and $P_0(N_u(\tau) \le T^\star, \text{output} \ne 0) \le 0.05$.
+  Hence $P_0(N_u(\tau) > T^\star) \ge 1 - 0.05 - 0.05 - 1/4 = 0.65$ and
+  $\E_0[N_u(\tau)] \ge 0.65\, (T^\star + 1) \ge \frac{\ln(1 + n/8)}{8\eps^2}$.
+\end{proof}
+
+\begin{lemma}[Lower bound for the two-batch game, Lemma 4.2]
+  \label{lem:two_batch}
+  \lean{Chase2026Tight.expectedRounds_ge_of_isGood_one}
+  \leanok
+  \uses{lem:two_batch_general}
+  Suppose that $k = 1$, $0 < \eps \le 0.1$ and $n \ge 10$, and let $A'$ be good. Then
+  $T(A', S_0) \ge \frac{\ln(n/10)}{8\eps^2}$.
+\end{lemma}
+
+\begin{proof}
+  The number of rounds is at least $N_1(\tau)$, and $\ln(n/10) \le \ln(1 + n/8)$;
+  Lemma~\ref{lem:two_batch_general}.
+\end{proof}
+
+\begin{remark}
+  The paper's proof treats the learner of the two-batch game as passive (it always pulls batch $1$,
+  so the rounds are i.i.d.\ draws from $P_\theta$). A learner may also pull arm $0$, which does not
+  redraw the advice of batch $1$: it can look at the advice of its next pull of batch $1$ before
+  deciding to stop. The record representation (Lemma~\ref{lem:record_representation}) handles
+  this: the advice of the next pull is uniform under every strategy.
+\end{remark}

@@ -1,0 +1,50 @@
+\chapter{Information theory}
+\label{chap:prereq_information}
+
+\begin{lemma}[KL divergence of a mixture]
+  \label{lem:klDiv_mixture_le}
+  Let $P_1, \dots, P_n$ and $Q$ be probability measures with $P_i \ll Q$, and $w_1, \dots, w_n \ge 0$
+  weights with $\sum_i w_i = 1$. Then
+  $\KL\big(\sum_i w_i P_i \,\big\|\, Q\big) \le \sum_i w_i \log\Big(\sum_j w_j \int \frac{dP_j}{dQ}
+  \, dP_i\Big)$.
+\end{lemma}
+
+\begin{proof}
+  With $M = \sum_j w_j P_j$, $\frac{dM}{dQ} = \sum_j w_j \frac{dP_j}{dQ}$ and
+  $\KL(M \| Q) = \sum_i w_i \int \log \frac{dM}{dQ} \, dP_i$. Apply Jensen's inequality to the
+  concave function $\log$ under each $P_i$.
+\end{proof}
+
+\begin{lemma}[Products of measures with densities]
+  \label{lem:pi_withDensity}
+  For finite measures $Q$ and measurable $f \ge 0$, the product of $T$ copies of
+  $Q.\mathrm{withDensity}(f)$ is $Q^T.\mathrm{withDensity}\big(g \mapsto \prod_{t < T} f(g_t)\big)$.
+\end{lemma}
+
+\begin{proof}
+  Both measures agree on boxes; uniqueness of product measures.
+\end{proof}
+
+\begin{lemma}[Pinsker's inequality for Bernoulli laws]
+  \label{lem:pinsker_bernoulli}
+  For $p, q \in [0, 1]$, $\kl(p, q) \ge 2 (p - q)^2$, where
+  $\kl(p, q) = p \log\frac{p}{q} + (1 - p) \log \frac{1 - p}{1 - q}$ is the divergence between
+  $\Ber(p)$ and $\Ber(q)$.
+\end{lemma}
+
+\begin{proof}
+  For fixed $p$, $g(q) = \kl(p, q) - 2(p - q)^2$ vanishes at $q = p$ and
+  $g'(q) = \frac{q - p}{q(1 - q)} - 4(q - p)$ has the sign of $q - p$, since $q(1 - q) \le 1/4$.
+\end{proof}
+
+\begin{lemma}[Pinsker's inequality for events]
+  \label{lem:pinsker_event}
+  \uses{lem:pinsker_bernoulli}
+  For probability measures $P, Q$ and a measurable event $E$,
+  $\abs{P(E) - Q(E)} \le \sqrt{\KL(P \| Q)/2}$.
+\end{lemma}
+
+\begin{proof}
+  By the data processing inequality (Mathlib's \texttt{klDiv\_map\_le}) applied to the indicator of
+  $E$, $\kl(P(E), Q(E)) \le \KL(P \| Q)$; Lemma~\ref{lem:pinsker_bernoulli}.
+\end{proof}

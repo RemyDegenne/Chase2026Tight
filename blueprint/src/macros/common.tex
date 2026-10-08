@@ -1,0 +1,40 @@
+% In this file you should put all LaTeX macros and settings to be used both by
+% the pdf version and the web version.
+% This should be most of your macros.
+
+% The theorem-like environments defined below are those that appear by default
+% in the dependency graph. See the README of leanblueprint if you need help to
+% customize this.
+% The configuration below use the theorem counter for all those environments
+% (this is what the [theorem] arguments mean) and never resets it.
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% ---------------------------------------------------------------------------
+% ---------------------------------------------------------------------------
+% Notation macros for the Chase2026Tight blueprint (lower bound for bandits with expert advice).
+% ---------------------------------------------------------------------------
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\indic}{\mathbf{1}}
+\newcommand{\abs}[1]{\lvert #1 \rvert}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\Ber}{\mathrm{Ber}}
+\newcommand{\KL}{\mathrm{KL}}
+\newcommand{\kl}{\mathrm{kl}}
+\newcommand{\Arm}{\mathcal{A}}           % arms of the reduced setting
+\newcommand{\Exp}{\mathcal{E}}           % experts of the reduced setting
+\newcommand{\Bat}{\mathcal{B}}           % batches of the reduced setting
+\newcommand{\mix}{\mathrm{mix}}
+\DeclareMathOperator*{\argmax}{arg\,max}

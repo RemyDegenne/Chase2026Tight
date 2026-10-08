@@ -1,0 +1,103 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+# formalization.yaml (v0.4): repo-root metadata for formalization projects.
+# See https://github.com/mathlib-initiative/formalization.yaml for the fields.
+
+version: "v0.4"
+
+project:
+  name: "Chase2026Tight"
+  description: >-
+    A Lean 4 / Mathlib formalization of "A Tight Lower Bound for Non-stochastic Multi-armed
+    Bandits with Expert Advice" (Chase, Ito, Mehalel, COLT 2026): the Ω(√(T K log(N/K))) lower
+    bound on the minimax pseudo-regret of the non-stochastic bandit with K arms and N ≥ 2K
+    experts against an adaptive adversary, through the reduction of special batch
+    identification (SBI) to regret minimization, a Kullback–Leibler bound between a mixture of
+    product laws and a product law, and lower bounds on the number of rounds of good SBI
+    algorithms. Learners, adversaries and identification algorithms are those of the LML (Lean
+    Machine Learning) library; the protocol of the bandit with expert advice and the
+    information-theoretic tools (KL divergence of mixtures, Pinsker's inequality for events) are
+    written in library generality, to be contributed to LML and Mathlib. The development is
+    blueprint-driven and proceeds in two phases: phase 1 states the headline results (this file
+    lists them; their statements are `sorry`-ed challenge statements for leanprover/comparator),
+    phase 2 proves them.
+  authors:
+    - "Rémy Degenne"
+  responsible_maintainers:
+    - "Rémy Degenne"
+  license: "Apache-2.0"
+  # extra keys (tolerated by the schema), kept for convenience:
+  repository: "https://github.com/RemyDegenne/Chase2026Tight"
+  blueprint: "https://remydegenne.github.io/Chase2026Tight/blueprint/"
+
+# This repository is the substantive formalization, not a packaging or comparison layer.
+repository:
+  role: "substantive-development"
+
+sources:
+  - title: "A Tight Lower Bound for Non-stochastic Multi-armed Bandits with Expert Advice"
+    authors:
+      - "Zachary Chase"
+      - "Shinji Ito"
+      - "Idan Mehalel"
+    id: "COLT 2026; arXiv:2511.00257"
+    type: "conference-paper"
+    location: "Lemmas 3.1, 4.1, 4.2, 5.1 and Theorem 6.1; see status.scope"
+    relationship: "formalizes"
+    license: ""
+    author_endorsement: "not-contacted"
+    note: >-
+      The LaTeX source of the paper (arXiv 2511.00257) is vendored in this repository under
+      `source/`. The formalization is driven by a blueprint (`blueprint/src/`, written by Claude
+      with the formalizer's review) that decomposes the paper's proofs into small lemmas, makes
+      the probabilistic arguments rigorous (a representation of the runs by i.i.d. pull records
+      replaces the paper's passivity and simulation arguments) and closes a gap of the proof of
+      the main theorem; the blueprint is a derived artifact of this project, not an independent
+      source. The statements started from the statement-only formalization of the paper in
+      `LMLPapers` (COLT2026/Chase2026Tight). The formalizer is not an author of the paper.
+
+related_formalizations: []   # no earlier or parallel formalization with proofs is known
+
+# Online learning, multi-armed bandits, lower bounds, information theory.
+classification:
+  arxiv: ["cs.LG", "stat.ML"]
+  msc2020:
+    - "68T05"   # learning and adaptive systems
+    - "68Q32"   # computational learning theory
+    - "62L05"   # sequential statistical design
+    - "94A17"   # measures of information, entropy
+
+status:
+  scope: >-
+    Phase 1 (statements), 2026-10-08. The results of the paper are stated in Lean, each as a
+    `sorry`-ed theorem (headline results, comparator targets listed in `comparator/targets.txt`),
+    over definitions written in library generality. Namespace `Chase2026Tight`, files
+    `Chase2026Tight/CIM2026/<Result>.lean`; blueprint labels in parentheses.
+
+    Setting (Sections 2 and 3, `Setting.lean`): the reduced setting with `K = 2k + 1` arms
+    (`Arm k`) and `N = kn + 1` experts (`Expert k n`) in `k` batches plus a dummy batch, the
+    advice process (the bits of a batch are redrawn after a pull of the batch), the strategies
+    `S_θ` of the adaptive adversary (`strategy ε θ`, LML environments whose losses do not depend
+    on the arm of the current round), SBI algorithms (LML identification algorithms with bandit
+    feedback, `SBIAlg`), good algorithms (`IsGood`, LML's `IdentAlg.IsPAC` at level 0.05) and
+    their expected number of rounds (`expectedRounds`).
+    Lemma 3.1 (`exists_isGood_expectedRounds_le`, `lem:reduction`): a learner with pseudo-regret
+    at most `r(T)` under the pool yields a good SBI algorithm with at most `T⋆` rounds for
+    `T⋆ ≥ 1000 r(T⋆)/ε`; `T⋆ ≥ 1` is added (the statement is false for `T⋆ = 0`).
+    Lemma 4.1 (`klDiv_mixture_pi_roundLaw_le`, `lem:kl_bound`): `KL(P_mix^T ‖ P_0^T) ≤
+    ((1 + 4ε²)^T - 1)/n`.
+    Lemma 4.2 (`expectedRounds_ge_of_isGood_one`, `lem:two_batch`): with one batch,
+    `T(A', S_0) ≥ ln(n/10)/(8ε²)`.
+    Lemma 5.1 (`expectedRounds_ge_of_isGood`, `lem:many_batches`): `T(A', S_0) ≥
+    k ln(n/10)/(20ε²)` (with the standing assumptions `0 < ε ≤ 0.1`, `n ≥ 10` made explicit).
+    Theorem 6.1 (`exists_pseudoRegret_ge`, `thm:main`): for `K ≥ 3`, `N ≥ 2K` and
+    `T ≥ K ln(N/K)`, every learner has pseudo-regret at least `c √(T K log(N/K))` against some
+    adaptive adversary with losses in `{0, 1}`. The paper states it for positive `K`; it is false
+    for `K = 1` and the proof needs `K ≥ 3`. The proof's assumption "without loss of generality
+    `n > 10`" fails for few experts per batch; the blueprint closes this gap with versions of
+    Lemmas 4.2 and 5.1 with `ln(1 + n/8)` in place of `ln(n/10)`, valid for every `n ≥ 1`.
+    Not formalized: Table 1 (a summary of known bounds) and the conjecture of Section 7.
+
+    The blueprint (7 chapters) decomposes every proof into labelled lemmas; the plan is in
+    `notes/blueprint-outline.md`. The 5 comparator challenges compile (`lake build Comparator`).
+  sorry_count: 5
+  sorry_in_definitions: 0

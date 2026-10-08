@@ -1,0 +1,5 @@
+exists_isGood_expectedRounds_le
+klDiv_mixture_pi_roundLaw_le
+expectedRounds_ge_of_isGood_one
+expectedRounds_ge_of_isGood
+exists_pseudoRegret_ge

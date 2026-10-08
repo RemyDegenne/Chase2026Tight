@@ -1,0 +1,36 @@
+\chapter{The general SBI game (Section 5)}
+\label{chap:many_batches}
+
+\begin{lemma}[General lower bound, all $n$]
+  \label{lem:many_batches_general}
+  \uses{lem:two_batch_general}
+  Let $n \ge 1$, $0 < \eps \le 0.1$ and $A'$ a good SBI algorithm. Then
+  $T(A', S_0) \ge k \frac{\ln(1 + n/8)}{8\eps^2}$.
+\end{lemma}
+
+\begin{proof}
+  The number of rounds $\tau$ is at least $\sum_{u \in [k]} N_u(\tau)$; sum
+  Lemma~\ref{lem:two_batch_general} over the $k$ batches.
+\end{proof}
+
+\begin{lemma}[Lower bound for the general SBI game, Lemma 5.1]
+  \label{lem:many_batches}
+  \lean{Chase2026Tight.expectedRounds_ge_of_isGood}
+  \leanok
+  \uses{lem:many_batches_general}
+  Let $0 < \eps \le 0.1$, $n \ge 10$ and $A'$ a good SBI algorithm. Then
+  $T(A', S_0) \ge k \frac{\ln(n/10)}{20\eps^2}$.
+\end{lemma}
+
+\begin{proof}
+  $\ln(n/10) \le \ln(1 + n/8)$ and $1/20 \le 1/8$; Lemma~\ref{lem:many_batches_general}.
+\end{proof}
+
+\begin{remark}
+  The paper states Lemma~\ref{lem:many_batches} without $0 < \eps \le 0.1$ and $n \ge 10$, standing
+  assumptions of its Sections 2 and 4. Its proof builds from $A'$ a good algorithm $B'$ for the
+  two-batch game that simulates the other batches, and applies Lemma~\ref{lem:two_batch} to $B'$.
+  Here the same conclusion is reached by applying the record argument of
+  Lemma~\ref{lem:two_batch_general} to each batch of the general game, which needs no
+  simulation of algorithms.
+\end{remark}
