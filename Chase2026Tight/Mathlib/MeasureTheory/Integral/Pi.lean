@@ -30,8 +30,6 @@ namespace MeasureTheory
 
 variable {ι : Type*} [Fintype ι]
 
--- the option is needed as in the proof of `MeasureTheory.integral_fin_nat_prod_eq_prod`
-set_option backward.isDefEq.respectTransparency false in
 /-- A version of **Tonelli's theorem** in `n` variables, for a natural number `n`: the Lebesgue
 integral of a product of measurable functions of distinct coordinates is the product of their
 Lebesgue integrals. -/
@@ -42,21 +40,16 @@ lemma lintegral_fin_nat_prod_eq_prod {n : ℕ} {E : Fin n → Type*}
   induction n with
   | zero => simp
   | succ n n_ih =>
-      calc
-        _ = ∫⁻ x : E 0 × ((i : Fin n) → E (Fin.succ i)),
-            f 0 x.1 * ∏ i : Fin n, f (Fin.succ i) (x.2 i)
-            ∂((μ 0).prod (Measure.pi (fun i ↦ μ i.succ))) := by
-          rw [← ((measurePreserving_piFinSuccAbove μ 0).symm).lintegral_comp_emb
-            (MeasurableEquiv.measurableEmbedding _)]
-          simp_rw [MeasurableEquiv.piFinSuccAbove_symm_apply, Fin.insertNthEquiv,
-            Fin.prod_univ_succ, Fin.insertNth_zero, Equiv.coe_fn_mk, Fin.cons_succ,
-            Fin.zero_succAbove, cast_eq, Fin.cons_zero]
-        _ = (∫⁻ x, f 0 x ∂μ 0)
-            * ∏ i : Fin n, ∫⁻ (x : E (Fin.succ i)), f (Fin.succ i) x ∂(μ i.succ) := by
-          rw [← n_ih (fun i ↦ hf i.succ), ← lintegral_prod_mul (hf 0).aemeasurable]
-          exact (Finset.measurable_prod _ fun i _ ↦
-            (hf i.succ).comp (measurable_pi_apply i)).aemeasurable
-        _ = ∏ i, ∫⁻ x, f i x ∂(μ i) := by rw [Fin.prod_univ_succ]
+      -- split off the coordinate `0`; the induction hypothesis is applied to the family
+      -- `j ↦ E (Fin.succAbove 0 j)` itself, which avoids identifying `Fin.succAbove 0` with
+      -- `Fin.succ` inside the dependent types
+      rw [← ((measurePreserving_piFinSuccAbove μ 0).symm).lintegral_comp_emb
+        (MeasurableEquiv.measurableEmbedding _)]
+      simp_rw [MeasurableEquiv.piFinSuccAbove_symm_apply, Fin.insertNthEquiv, Equiv.coe_fn_mk,
+        Fin.prod_univ_succAbove _ 0, Fin.insertNth_apply_same, Fin.insertNth_apply_succAbove]
+      rw [← n_ih (fun i ↦ hf _)]
+      exact lintegral_prod_mul (hf 0).aemeasurable
+        (Finset.measurable_prod _ fun i _ ↦ (hf _).comp (measurable_pi_apply i)).aemeasurable
 
 /-- A version of **Tonelli's theorem** with the variables indexed by a finite type: the Lebesgue
 integral of a product of measurable functions of distinct coordinates is the product of their

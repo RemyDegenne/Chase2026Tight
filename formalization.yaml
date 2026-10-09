@@ -124,5 +124,10 @@ status:
     batch (closed by the `ln(1 + n/8)` bounds); Lemma 4.1 holds for `T = 0`, and the KL bound
     through the records holds for every `ε`. Library material to upstream:
     `notes/upstreaming-candidates.md`.
+
+    Linter cleanup, 2026-10-09: the library has no `set_option` and no `@[nolint]`. Lemma 4.1
+    no longer assumes `T ≥ 1`, which its proof does not use (the bound holds for `T = 0`); the
+    statement is strictly stronger and its challenge is regenerated. The proof of
+    `lintegral_fin_nat_prod_eq_prod` no longer needs `backward.isDefEq.respectTransparency`.
   sorry_count: 0
   sorry_in_definitions: 0

@@ -6,8 +6,9 @@ without having to read or trust the Lean development in `Chase2026Tight/`.
 
 **Status.** Phase 2 complete (2026-10-08): the project proves the 5 headline theorems with no
 `sorry` and the standard axioms only; the challenges, regenerated after phase 2, compile
-(`lake build Comparator`). The full comparator run (`scripts/comparator-verify.sh`) remains to be
-done.
+(`lake build Comparator`). In the linter cleanup (2026-10-09) Lemma 4.1 was strengthened by
+dropping its unused hypothesis `T ≥ 1`, and its challenge was regenerated. The full comparator run
+(`scripts/comparator-verify.sh`) remains to be done.
 
 Each challenge is one self-contained file whose transitive imports resolve to Mathlib and Lean
 core only, the shape the [Palomar registry](https://palomar-registry.org/) enforces: no LML, no

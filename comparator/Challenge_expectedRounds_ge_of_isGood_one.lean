@@ -39,9 +39,11 @@ public import Mathlib.Probability.Distributions.Uniform
 public import Mathlib.Probability.Kernel.Composition.MeasureCompProd
 public import Mathlib.Topology.Algebra.InfiniteSum.ENNReal
 public import Mathlib.InformationTheory.KullbackLeibler.Basic
+public import Mathlib.Order.WithBot
 public import Mathlib.MeasureTheory.Integral.Pi
 public import Mathlib.Probability.Kernel.Composition.WithDensity
 public import Mathlib.InformationTheory.KullbackLeibler.DataProcessing
+public import Mathlib.Probability.Kernel.Composition.MeasureComp
 
 /-! # Standalone extraction for `Chase2026Tight.expectedRounds_ge_of_isGood_one`
 Definitions are copied verbatim; theorem proofs are replaced by `sorry`.

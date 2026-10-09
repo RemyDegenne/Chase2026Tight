@@ -40,7 +40,7 @@ are listed in [`formalization.yaml`](formalization.yaml) and are standalone chal
 | Result | Lean declaration | Notes |
 |---|---|---|
 | Lemma 3.1 (reduction from SBI to BwE) | `exists_isGood_expectedRounds_le` | `T⋆ ≥ 1` added (false for `T⋆ = 0`) |
-| Lemma 4.1 (KL bound) | `klDiv_mixture_pi_roundLaw_le` | `T ≥ 1` not needed; proved through the χ² divergence |
+| Lemma 4.1 (KL bound) | `klDiv_mixture_pi_roundLaw_le` | the paper's `T ≥ 1` is dropped; proved through the χ² divergence |
 | Lemma 4.2 (two-batch lower bound) | `expectedRounds_ge_of_isGood_one` | from a bound with `ln(1 + n/8)`, valid for all `n ≥ 1` |
 | Lemma 5.1 (general SBI lower bound) | `expectedRounds_ge_of_isGood` | standing assumptions `0 < ε ≤ 0.1`, `n ≥ 10` explicit |
 | Theorem 6.1 (main lower bound) | `exists_pseudoRegret_ge` | `K ≥ 3` (false for `K = 1`) |

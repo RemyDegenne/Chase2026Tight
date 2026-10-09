@@ -59,8 +59,9 @@ $P_{\mix^T} = \frac1n \sum_{v \in [n]} P_{(1,v)}^T$.
   \lean{Chase2026Tight.klDiv_mixture_pi_roundLaw_le}
   \leanok
   \uses{lem:klDiv_mixture_le, lem:roundLaw_withDensity, lem:integral_ratio}
-  If $0 < \eps \le 0.1$, then for all $T \ge 1$ and $n \ge 1$,
-  $\KL(P_{\mix^T} \,\|\, P_0^T) \le \frac{(1 + 4\eps^2)^T - 1}{n}$.
+  If $0 < \eps \le 0.1$, then for all $T$ and $n \ge 1$,
+  $\KL(P_{\mix^T} \,\|\, P_0^T) \le \frac{(1 + 4\eps^2)^T - 1}{n}$. (The paper assumes $T \ge 1$;
+  the bound also holds for $T = 0$.)
 \end{lemma}
 
 \begin{proof}

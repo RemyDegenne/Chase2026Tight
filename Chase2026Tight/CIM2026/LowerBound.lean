@@ -215,8 +215,8 @@ lemma ofReal_le_lintegral_pullsBefore (hσρ : ∀ a, σ (ρ a) = a) (hττ' : �
             ENNReal.inv_mul_cancel hn0 (ENNReal.natCast_ne_top n), one_mul]
   have hKL : klDiv mix (D.outputMeasure S₀) ≤ ENNReal.ofReal (1 / 4) :=
     (klDiv_outputMeasure_le_klDiv_pi hσρ hττ' (stopAtPulls σ u M A') u M
-      fun _ _ hh ↦ Or.inr hh).trans ((klDiv_mixture_pi_roundLaw_le hn ⟨hε0, hε1⟩
-        (by omega)).trans (ENNReal.ofReal_le_ofReal
+      fun _ _ hh ↦ Or.inr hh).trans ((klDiv_mixture_pi_roundLaw_le hn ⟨hε0, hε1⟩).trans
+        (ENNReal.ofReal_le_ofReal
           (one_add_pow_floor_sub_one_div_le hn ⟨hε0, hε1⟩)))
   have hpin := (ofReal_two_mul_sq_measureReal_sub_le_klDiv (P := mix) (Q := D.outputMeasure S₀)
     (measurableSet_singleton true)).trans hKL
