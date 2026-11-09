@@ -5,7 +5,6 @@
         "Chase2026Tight.exists_pseudoRegret_ge",
         "Bandits.measurable_banditFeedback",
         "Learning.Environment.FeedbackIgnoresAction._proof_1",
-        "Learning.Algorithm.comap._proof_1",
         "Learning.Algorithm.comapPartialFeedback._proof_1",
         "Bandits.diracAdvice._proof_1"
     ],

@@ -6,8 +6,8 @@ Authors: Rémy Degenne
 module
 
 public import Chase2026Tight.CIM2026.Embedding
-public import Chase2026Tight.LeanMachineLearning.Online.Bandit.Adversarial
-public import Chase2026Tight.LeanMachineLearning.SequentialLearning.RunTransport
+public import Chase2026Tight.ForLMLExplore.Bandits.Adversarial
+public import Chase2026Tight.ForLMLExplore.SequentialLearning.RunTransport
 
 /-!
 # Runs of an SBI algorithm in the finite reduced setting

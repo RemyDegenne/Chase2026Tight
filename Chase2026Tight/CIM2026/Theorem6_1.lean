@@ -8,8 +8,8 @@ module
 public import Chase2026Tight.CIM2026.FinEmbedding
 public import Chase2026Tight.CIM2026.LowerBound
 public import Chase2026Tight.CIM2026.Reduction
-public import Chase2026Tight.LeanMachineLearning.Online.Bandit.ExpertAdviceLaw
-public import Chase2026Tight.LeanMachineLearning.SequentialLearning.ExistsRun
+public import Chase2026Tight.ForLMLExplore.Bandits.ExpertAdviceLaw
+public import Chase2026Tight.ForLMLExplore.SequentialLearning.ExistsRun
 
 /-!
 # Theorem 6.1: the tight lower bound for non-stochastic bandits with expert advice
@@ -102,7 +102,7 @@ lemma log_le_four_mul_log_one_add_div_eight {x : ℝ} (hx : 0 < x) :
   refine Real.log_le_log hx ?_
   nlinarith [sq_nonneg (x / 8 - 1 / 3), pow_nonneg hx.le 3, pow_nonneg hx.le 4]
 
-/-- **Theorem 6.1** (Chase, Ito, Mehalel 2026). There is a universal constant `c > 0` such that
+/-- **Theorem 6.1** [CIM26, Theorem 6.1]. There is a universal constant `c > 0` such that
 for all numbers of arms `K ≥ 3` and experts `N ≥ 2K`, every horizon `T ≥ K ln(N / K)` and every
 learner for the bandit with expert advice, there is an adaptive adversary (whose losses do not
 depend on the arm pulled in the current round) with losses in `{0, 1}`

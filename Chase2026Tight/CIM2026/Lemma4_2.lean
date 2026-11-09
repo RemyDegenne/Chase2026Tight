@@ -24,7 +24,7 @@ universe u
 
 namespace Chase2026Tight
 
-/-- **Lemma 4.2** (lower bound for the two-batch game, Chase, Ito, Mehalel 2026). Let `k = 1`,
+/-- **Lemma 4.2** [CIM26, Lemma 4.2] (lower bound for the two-batch game). Let `k = 1`,
 `0 < ε ≤ 0.1` and `n ≥ 10`. Every good SBI algorithm satisfies
 `T(A', S_0) ≥ ln(n / 10) / (8 ε²)`. -/
 theorem expectedRounds_ge_of_isGood_one {n : ℕ} (hn : 10 ≤ n) {ε : ℝ} (hε : ε ∈ Set.Ioc 0 0.1)

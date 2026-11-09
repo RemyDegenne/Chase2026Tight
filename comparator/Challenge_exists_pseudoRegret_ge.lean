@@ -4,47 +4,32 @@ public import Mathlib.Analysis.Convex.Basic
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
 public import Mathlib.Geometry.Convex.ConvexSpace.CompactSpaceStdSimplex
-public import Mathlib.Probability.Kernel.Basic
-public import Mathlib.Probability.Kernel.IonescuTulcea.Traj
-public import Mathlib.Probability.Process.FiniteDimensionalLaws
-public import Mathlib.Probability.HasCondDistrib
-public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
-public import Mathlib.Probability.Independence.Basic
-public import Mathlib.Probability.Independence.Conditional
-public import Mathlib.MeasureTheory.Measure.SubFinite
-public import Mathlib.Probability.Kernel.RadonNikodym
-public import Mathlib.MeasureTheory.MeasurableSpace.Embedding
-public import Mathlib.Order.Restriction
-public import Mathlib.Probability.Kernel.IonescuTulcea.Maps
-public import Mathlib.Analysis.Normed.Ring.Basic
-public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
-public import Mathlib.Probability.IdentDistrib
-public import Mathlib.Probability.Independence.InfinitePi
-public import Mathlib.Probability.Kernel.Composition.MapComap
-public import Mathlib.Probability.Process.HittingTime
-public import Mathlib.MeasureTheory.Constructions.Cylinders
-public import Mathlib.MeasureTheory.Integral.Indicator
-public import Mathlib.Probability.ConditionalProbability
-public import Mathlib.Probability.HasLaw
-public import Mathlib.MeasureTheory.Measure.Map
+public import LeanMachineLearning.SequentialLearning.EvaluationEnv
+public import LeanMachineLearning.SequentialLearning.StationaryEnv
+public import LeanMachineLearning.ForMathlib.Probability.Independence.Basic
+public import LeanMachineLearning.SequentialLearning.IdentificationAlg
+public import LeanMachineLearning.SequentialLearning.Comap
+public import LeanMachineLearning.SequentialLearning.Deterministic
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import LeanMachineLearning.ForMathlib.Analysis.Convex.Subgradient.Deriv
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Analysis.Calculus.Gradient.Basic
-public import Mathlib.Analysis.Calculus.LineDeriv.Basic
-public import Mathlib.Analysis.Convex.Function
-public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.PiProd
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
+public import Mathlib.Probability.HasCondDistrib
 public import Mathlib.MeasureTheory.Integral.Prod
 public import Mathlib.Probability.Kernel.Composition.IntegralCompProd
+public import Mathlib.Probability.UniformOn
 public import Mathlib.Probability.Distributions.Bernoulli
-public import Mathlib.Probability.Distributions.Uniform
 public import Mathlib.Probability.Kernel.Composition.MeasureCompProd
 public import Mathlib.Topology.Algebra.InfiniteSum.ENNReal
+public import LeanMachineLearning.ForMathlib.InformationTheory.KullbackLeibler.Restrict
 public import Mathlib.InformationTheory.KullbackLeibler.Basic
+public import Mathlib.Probability.Process.HittingTime
 public import Mathlib.Order.WithBot
 public import Mathlib.MeasureTheory.Integral.Pi
 public import Mathlib.Probability.Kernel.Composition.WithDensity
 public import Mathlib.InformationTheory.KullbackLeibler.DataProcessing
+public import LeanMachineLearning.SequentialLearning.StoppedHistory
 public import Mathlib.Probability.Kernel.Composition.MeasureComp
 
 /-! # Standalone extraction for `Chase2026Tight.exists_pseudoRegret_ge`
@@ -64,14 +49,12 @@ namespace Learning
 end Learning
 namespace ProbabilityTheory
 end ProbabilityTheory
-namespace ENNReal
-end ENNReal
 namespace Bandits
 end Bandits
 namespace Chase2026Tight
 end Chase2026Tight
 
--- ═══ Chase2026Tight.Mathlib.Analysis.Convex.Simplex ═══
+-- ═══ Chase2026Tight.ForLMLExplore.Analysis.Convex.Simplex ═══
 @[expose] public section
 open MeasureTheory
 namespace Learning
@@ -89,94 +72,7 @@ lemma single_mem_simplex [DecidableEq ι] (i : ι) : EuclideanSpace.single i (1 
 end Learning
 end
 
--- ═══ LeanMachineLearning.SequentialLearning.Algorithm ═══
-@[expose] public section
-open MeasureTheory ProbabilityTheory Filter Real Finset
-open scoped ENNReal NNReal
-namespace Learning
-variable {𝓞 𝓐 𝓨 Ω : Type*} {m𝓞 : MeasurableSpace 𝓞} {m𝓐 : MeasurableSpace 𝓐} {m𝓨 : MeasurableSpace 𝓨} {mΩ : MeasurableSpace Ω}
-
-/-- One round of interaction: an observation, then an action, then a feedback. -/
-abbrev Round (𝓞 𝓐 𝓨 : Type*) := 𝓞 × 𝓐 × 𝓨
-
-/-- The observation of a round. -/
-def Round.obs (r : Round 𝓞 𝓐 𝓨) : 𝓞 := r.1
-
-/-- The action of a round. -/
-def Round.action (r : Round 𝓞 𝓐 𝓨) : 𝓐 := r.2.1
-
-/-- The feedback of a round. -/
-def Round.feedback (r : Round 𝓞 𝓐 𝓨) : 𝓨 := r.2.2
-
-/-- History of `n` complete rounds; `n = 0` is the empty history. -/
-abbrev Hist (𝓞 𝓐 𝓨 : Type*) (n : ℕ) := Fin n → Round 𝓞 𝓐 𝓨
-
-/-- A stochastic, sequential algorithm.
-At each round, it sees an observation in `𝓞`, then takes an action in `𝓐`, and finally receives
-feedback in `𝓨`. The action is a random function of the past rounds and the current observation. -/
-@[ext]
-structure Algorithm (𝓞 𝓐 𝓨 : Type*) [MeasurableSpace 𝓞] [MeasurableSpace 𝓐] [MeasurableSpace 𝓨]
-    where
-  /-- Law of the action of round `n` given the past rounds and the current observation. -/
-  policy : (n : ℕ) → Kernel (Hist 𝓞 𝓐 𝓨 n × 𝓞) 𝓐
-  /-- The policy is a Markov kernel. -/
-  [isMarkovKernel_policy : ∀ n, IsMarkovKernel (policy n)]
-
-instance instIsMarkovKernelProdHistPolicy (alg : Algorithm 𝓞 𝓐 𝓨) (n : ℕ) : IsMarkovKernel (alg.policy n) :=
-  alg.isMarkovKernel_policy n
-
-/-- A stochastic environment.
-At each round, an observation is drawn prior to the algorithm taking an action. Then the environment
-provides feedback based on the observation and the action. -/
-@[ext]
-structure Environment (𝓞 𝓐 𝓨 : Type*) [MeasurableSpace 𝓞] [MeasurableSpace 𝓐] [MeasurableSpace 𝓨]
-    where
-  /-- Law of the observation of round `n` given the past rounds. -/
-  obs : (n : ℕ) → Kernel (Hist 𝓞 𝓐 𝓨 n) 𝓞
-  /-- Law of the feedback of round `n` given the past rounds, the observation and the action. -/
-  feedback : (n : ℕ) → Kernel ((Hist 𝓞 𝓐 𝓨 n × 𝓞) × 𝓐) 𝓨
-  /-- The observation kernel is a Markov kernel. -/
-  [isMarkovKernel_obs : ∀ n, IsMarkovKernel (obs n)]
-  /-- The feedback kernel is a Markov kernel. -/
-  [isMarkovKernel_feedback : ∀ n, IsMarkovKernel (feedback n)]
-
-section IsAlgEnvSeq
-variable {O : ℕ → Ω → 𝓞} {A : ℕ → Ω → 𝓐} {Y : ℕ → Ω → 𝓨} {alg : Algorithm 𝓞 𝓐 𝓨} {env : Environment 𝓞 𝓐 𝓨} {P : Measure Ω} [IsFiniteMeasure P] {N : ℕ}
-
-/-- History of the algorithm-environment sequence before time `n`: the rounds at
-times `0, ..., n - 1`. -/
-def history (O : ℕ → Ω → 𝓞) (A : ℕ → Ω → 𝓐) (Y : ℕ → Ω → 𝓨) (n : ℕ) (ω : Ω) : Hist 𝓞 𝓐 𝓨 n :=
-  fun i ↦ (O i ω, A i ω, Y i ω)
-
-/-- An algorithm-environment sequence: a sequence of observations, actions and feedbacks generated
-by an algorithm interacting with an environment. -/
-structure IsAlgEnvSeq
-    (O : ℕ → Ω → 𝓞) (A : ℕ → Ω → 𝓐) (Y : ℕ → Ω → 𝓨)
-    (alg : Algorithm 𝓞 𝓐 𝓨) (env : Environment 𝓞 𝓐 𝓨)
-    (P : Measure Ω) [IsFiniteMeasure P] : Prop where
-  /-- The observation sequence is measurable. -/
-  measurable_obs n : Measurable (O n) := by fun_prop
-  /-- The action sequence is measurable. -/
-  measurable_action n : Measurable (A n) := by fun_prop
-  /-- The feedback sequence is measurable. -/
-  measurable_feedback n : Measurable (Y n) := by fun_prop
-  /-- The observation at time `n` has the correct conditional distribution given the history. -/
-  hasCondDistrib_obs n :
-    HasCondDistrib (O n) (history O A Y n) (env.obs n) P
-  /-- The action at time `n` has the correct conditional distribution given the history and the
-  observation at time `n`. -/
-  hasCondDistrib_action n :
-    HasCondDistrib (A n) (fun ω ↦ (history O A Y n ω, O n ω)) (alg.policy n) P
-  /-- The feedback at time `n` has the correct conditional distribution given the history, the
-  observation and the action at time `n`. -/
-  hasCondDistrib_feedback n :
-    HasCondDistrib (Y n) (fun ω ↦ ((history O A Y n ω, O n ω), A n ω)) (env.feedback n) P
-
-end IsAlgEnvSeq
-end Learning
-end
-
--- ═══ Chase2026Tight.LeanMachineLearning.SequentialLearning.ObliviousEnv ═══
+-- ═══ Chase2026Tight.ForLMLExplore.SequentialLearning.Environments.ObliviousEnv ═══
 @[expose] public section
 open MeasureTheory ProbabilityTheory
 namespace Learning
@@ -195,30 +91,7 @@ def Environment.FeedbackIn (env : Environment 𝓞 𝓐 𝓨) (s : Set 𝓨) : P
 end Learning
 end
 
--- ═══ LeanMachineLearning.SequentialLearning.Comap ═══
-@[expose] public section
-open MeasureTheory ProbabilityTheory
-namespace Learning
-variable {𝓞 𝓞' 𝓞'' 𝓐 𝓐' 𝓐'' 𝓨 𝓨' 𝓨'' Ω : Type*} {m𝓞 : MeasurableSpace 𝓞} {m𝓞' : MeasurableSpace 𝓞'} {m𝓞'' : MeasurableSpace 𝓞''} {m𝓐 : MeasurableSpace 𝓐} {m𝓐' : MeasurableSpace 𝓐'} {m𝓐'' : MeasurableSpace 𝓐''} {m𝓨 : MeasurableSpace 𝓨} {m𝓨' : MeasurableSpace 𝓨'} {m𝓨'' : MeasurableSpace 𝓨''} {mΩ : MeasurableSpace Ω} {fo : 𝓞 → 𝓞'} {fa : 𝓐 → 𝓐'} {fy : 𝓨 → 𝓨'} {go : 𝓞' → 𝓞''} {ga : 𝓐' → 𝓐''} {gy : 𝓨' → 𝓨''}
-section Comap
-
-/-- The algorithm with observations in `𝓞'` and feedbacks in `𝓨'` obtained from
-`alg : Algorithm 𝓞 𝓐 𝓨` by transforming the pair (past rounds, current observation) by `F n` at
-each round `n` before applying the policy of `alg`.
-
-This is the primitive transport operation on algorithms: `Algorithm.comapObs` and
-`Algorithm.comapFeedback` are the special cases in which `F n` is a round-wise map of the
-observation and of the feedback. -/
-def Algorithm.comap (alg : Algorithm 𝓞 𝓐 𝓨)
-    (F : (n : ℕ) → Hist 𝓞' 𝓐 𝓨' n × 𝓞' → Hist 𝓞 𝓐 𝓨 n × 𝓞) (hF : ∀ n, Measurable (F n)) :
-    Algorithm 𝓞' 𝓐 𝓨' where
-  policy n := (alg.policy n).comap (F n) (hF n)
-
-end Comap
-end Learning
-end
-
--- ═══ Chase2026Tight.LeanMachineLearning.SequentialLearning.PartialFeedback ═══
+-- ═══ Chase2026Tight.ForLMLExplore.SequentialLearning.PartialFeedback ═══
 @[expose] public section
 open MeasureTheory ProbabilityTheory
 namespace Learning
@@ -249,7 +122,7 @@ noncomputable def Algorithm.comapPartialFeedback (alg : Algorithm 𝓞 𝓐 𝓦
 end Learning
 end
 
--- ═══ Chase2026Tight.LeanMachineLearning.Online.Bandit.Adversarial ═══
+-- ═══ Chase2026Tight.ForLMLExplore.Bandits.Adversarial ═══
 @[expose] public section
 open MeasureTheory ProbabilityTheory Finset Learning
 namespace Bandits
@@ -280,7 +153,7 @@ noncomputable def Algorithm.comapBanditFeedback (alg : Algorithm 𝓞 α 𝓨) :
 end Learning
 end
 
--- ═══ Chase2026Tight.LeanMachineLearning.Online.Bandit.ExpertAdvice ═══
+-- ═══ Chase2026Tight.ForLMLExplore.Bandits.ExpertAdvice ═══
 @[expose] public section
 open MeasureTheory ProbabilityTheory Finset Learning
 namespace Bandits
@@ -321,7 +194,7 @@ open MeasureTheory ProbabilityTheory Learning Bandits Real
 universe u v w
 namespace Chase2026Tight
 
-/-- **Theorem 6.1** (Chase, Ito, Mehalel 2026). There is a universal constant `c > 0` such that
+/-- **Theorem 6.1** [CIM26, Theorem 6.1]. There is a universal constant `c > 0` such that
 for all numbers of arms `K ≥ 3` and experts `N ≥ 2K`, every horizon `T ≥ K ln(N / K)` and every
 learner for the bandit with expert advice, there is an adaptive adversary (whose losses do not
 depend on the arm pulled in the current round) with losses in `{0, 1}`

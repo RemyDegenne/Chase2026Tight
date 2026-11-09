@@ -5,9 +5,9 @@ Authors: Rémy Degenne
 -/
 module
 
-public import Chase2026Tight.LeanMachineLearning.Online.Bandit.ExpertAdvice
+public import Chase2026Tight.ForLMLExplore.Bandits.ExpertAdvice
 public import Mathlib.Probability.Distributions.Bernoulli
-public import Mathlib.Probability.Distributions.Uniform
+public import Mathlib.Probability.UniformOn
 public import Mathlib.Probability.Kernel.Composition.MeasureCompProd
 
 /-!
@@ -128,10 +128,10 @@ def bitsOf (e : Expert k n → Arm k) : Bits k n := fun u v ↦
 
 /-- The uniform law on the advice bits. -/
 noncomputable def uniformBits (k n : ℕ) : Measure (Bits k n) :=
-  (PMF.uniformOfFintype (Bits k n)).toMeasure
+  uniformOn (Set.univ : Set (Bits k n))
 
 instance : IsProbabilityMeasure (uniformBits k n) :=
-  inferInstanceAs (IsProbabilityMeasure (PMF.uniformOfFintype (Bits k n)).toMeasure)
+  inferInstanceAs (IsProbabilityMeasure (uniformOn (Set.univ : Set (Bits k n))))
 
 /-- The law of the advice of the next round, given the arm `I` pulled and the advice `e` of the
 current round: the bits of the batch of `I` are redrawn uniformly, the others are kept. -/
@@ -164,11 +164,11 @@ instance (p : ℝ) : IsProbabilityMeasure (bern p) :=
 with law `Ber(1/2 - ε)` (under `S_(u, v)`, the arm advised by `(u, v)` is incorrect iff `f`). -/
 noncomputable def lossRandomness (k : ℕ) (ε : ℝ) : Measure (Bool × (Fin k → Bool) × Bool) :=
   (bern (1 / 2 - ε / 2)).prod
-    (((PMF.uniformOfFintype (Fin k → Bool)).toMeasure).prod (bern (1 / 2 - ε)))
+    ((uniformOn (Set.univ : Set (Fin k → Bool))).prod (bern (1 / 2 - ε)))
 
 instance (ε : ℝ) : IsProbabilityMeasure (lossRandomness k ε) :=
   inferInstanceAs (IsProbabilityMeasure ((bern (1 / 2 - ε / 2)).prod
-    (((PMF.uniformOfFintype (Fin k → Bool)).toMeasure).prod (bern (1 / 2 - ε)))))
+    ((uniformOn (Set.univ : Set (Fin k → Bool))).prod (bern (1 / 2 - ε)))))
 
 /-- The correct arm of batch `u` under `S_θ`, given the advice `e` and the randomness `r`. -/
 def correctArm (θ : Expert k n) (e : Expert k n → Arm k) (r : Bool × (Fin k → Bool) × Bool)
@@ -261,6 +261,6 @@ def IsGood (ε : ℝ) (A : SBIAlg k n) : Prop :=
 noncomputable def expectedRounds (A : SBIAlg k n) {Ω : Type u} {_ : MeasurableSpace Ω}
     (O : ℕ → Ω → Expert k n → Arm k) (X : ℕ → Ω → Arm k) (Y : ℕ → Ω → Arm k → ℝ)
     (P : Measure Ω) : ℝ≥0∞ :=
-  ∫⁻ ω, (A.toIdentAlg.stoppingTime O X Y ω : ℝ≥0∞) ∂P
+  ∫⁻ ω, ENat.toENNReal (A.toIdentAlg.stoppingTime O X Y ω) ∂P
 
 end Chase2026Tight

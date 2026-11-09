@@ -5,8 +5,9 @@ Updated as phase 2 proceeds.
 
 ## Mathlib
 
-* `Chase2026Tight/Mathlib/Analysis/Convex/Simplex.lean`,
-  `Chase2026Tight/Mathlib/MeasureTheory/MeasurableSpace/Constructions.lean` (from `LMLPapers`).
+* `Chase2026Tight/ForLMLExplore/Analysis/Convex/Simplex.lean`,
+  `Chase2026Tight/ForLMLExplore/MeasureTheory/MeasurableSpace/Constructions.lean`
+  (from `LMLPapers`).
 * Done in phase 2 (Mathlib-shaped, namespaces `MeasureTheory`/`ProbabilityTheory`/`InformationTheory`):
   - `InformationTheory/KullbackLeibler/Pinsker.lean`: Pinsker's inequality for Bernoulli laws and
     for events (`ofReal_two_mul_sq_measureReal_sub_le_klDiv`); Mathlib has neither Pinsker's nor
@@ -26,14 +27,14 @@ Updated as phase 2 proceeds.
 ## LML
 
 * From `LMLPapers`: the adversarial bandit protocol and pseudo-regret
-  (`Online/Bandit/Adversarial.lean`), the bandit with expert advice
-  (`Online/Bandit/ExpertAdvice.lean`), partial feedback for algorithms and identification
+  (`Bandits/Adversarial.lean`), the bandit with expert advice
+  (`Bandits/ExpertAdvice.lean`), partial feedback for algorithms and identification
   algorithms (`SequentialLearning/PartialFeedback.lean`, `FactorsThrough.lean`), environments
-  ignoring the current action (`SequentialLearning/ObliviousEnv.lean`), online convex regret
-  (`Online/Convex/Regret.lean`).
+  ignoring the current action (`SequentialLearning/Environments/ObliviousEnv.lean`), online
+  convex regret (`OnlineLearning/Regret.lean`).
 * Done in phase 2 (namespace `Learning` / `Bandits`):
-  - `SequentialLearning/ObliviousEnv.lean`: conditional law of the feedback of environments that
-    ignore the current action;
+  - `SequentialLearning/Environments/ObliviousEnv.lean`: conditional law of the feedback of
+    environments that ignore the current action;
   - `SequentialLearning/ExistsRun.lean`: transport of runs along measure-preserving maps, runs of
     identification algorithms in a large universe, relabelling along measurable equivalences and
     runs in exactly `Type w` (`exists_isAlgEnvSeq_of_measurableEquiv`, `_of_finite`);
@@ -41,4 +42,4 @@ Updated as phase 2 proceeds.
     laws), `StoppedHistLaw.lean` (the law of the stopped history is determined by the histories
     before stopping), `HistMixture.lean` (trajectory laws that factor through a mixing measure),
     `IdentificationAlg.lean` (measurability of stopped histories, output laws as integrals);
-  - `Online/Bandit/ExpertAdviceLaw.lean`: the pseudo-regret depends only on the law of the run.
+  - `Bandits/ExpertAdviceLaw.lean`: the pseudo-regret depends only on the law of the run.

@@ -23,7 +23,7 @@ universe u
 
 namespace Chase2026Tight
 
-/-- **Lemma 3.1** (reduction from SBI to BwE, Chase, Ito, Mehalel 2026). Let `alg` be a learner
+/-- **Lemma 3.1** [CIM26, Lemma 3.1] (reduction from SBI to BwE). Let `alg` be a learner
 for the bandit with expert advice whose pseudo-regret under every strategy `S_θ` of the pool is
 at most `r T` after `T` rounds, for all `T`, and let `T⋆ ≥ 1000 r(T⋆) / ε`. Then there is a good
 SBI algorithm whose expected number of rounds under every strategy of the pool is at most

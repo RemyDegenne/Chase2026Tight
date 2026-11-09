@@ -1,37 +1,18 @@
 module
 
 public import Mathlib.Probability.Distributions.Bernoulli
-public import Mathlib.Probability.Distributions.Uniform
+public import Mathlib.Probability.UniformOn
 public import Mathlib.Probability.Kernel.Composition.MeasureCompProd
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
-public import Mathlib.Probability.Kernel.Basic
-public import Mathlib.Probability.Kernel.IonescuTulcea.Traj
-public import Mathlib.Probability.Process.FiniteDimensionalLaws
-public import Mathlib.Probability.HasCondDistrib
-public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
-public import Mathlib.Probability.Independence.Basic
-public import Mathlib.Probability.Independence.Conditional
-public import Mathlib.MeasureTheory.Measure.SubFinite
-public import Mathlib.Probability.Kernel.RadonNikodym
-public import Mathlib.MeasureTheory.MeasurableSpace.Embedding
-public import Mathlib.Order.Restriction
-public import Mathlib.Probability.Kernel.IonescuTulcea.Maps
-public import Mathlib.Analysis.Normed.Ring.Basic
-public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
-public import Mathlib.Probability.Process.HittingTime
-public import Mathlib.MeasureTheory.Constructions.Cylinders
-public import Mathlib.MeasureTheory.Integral.Indicator
-public import Mathlib.Probability.ConditionalProbability
-public import Mathlib.Probability.HasLaw
-public import Mathlib.Probability.IdentDistrib
-public import Mathlib.MeasureTheory.Measure.Map
-public import Mathlib.Probability.Independence.InfinitePi
-public import Mathlib.Probability.Kernel.Composition.MapComap
+public import LeanMachineLearning.SequentialLearning.IdentificationAlg
+public import LeanMachineLearning.SequentialLearning.Comap
+public import LeanMachineLearning.SequentialLearning.Deterministic
+public import LeanMachineLearning.SequentialLearning.EvaluationEnv
+public import LeanMachineLearning.SequentialLearning.StationaryEnv
+public import LeanMachineLearning.ForMathlib.Probability.Independence.Basic
+public import LeanMachineLearning.ForMathlib.Analysis.Convex.Subgradient.Deriv
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Analysis.Calculus.Gradient.Basic
-public import Mathlib.Analysis.Calculus.LineDeriv.Basic
-public import Mathlib.Analysis.Convex.Function
-public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.PiProd
 public import Mathlib.Analysis.Convex.Basic
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
@@ -128,7 +109,7 @@ def bitsOf (e : Expert k n → Arm k) : Bits k n := fun u v ↦
 
 /-- The uniform law on the advice bits. -/
 noncomputable def uniformBits (k n : ℕ) : Measure (Bits k n) :=
-  (PMF.uniformOfFintype (Bits k n)).toMeasure
+  uniformOn (Set.univ : Set (Bits k n))
 
 /-- The Bernoulli law on `Bool` giving probability `p` to `true` (`p` is clamped to `[0, 1]`). -/
 noncomputable def bern (p : ℝ) : Measure Bool :=
@@ -139,7 +120,7 @@ noncomputable def bern (p : ℝ) : Measure Bool :=
 with law `Ber(1/2 - ε)` (under `S_(u, v)`, the arm advised by `(u, v)` is incorrect iff `f`). -/
 noncomputable def lossRandomness (k : ℕ) (ε : ℝ) : Measure (Bool × (Fin k → Bool) × Bool) :=
   (bern (1 / 2 - ε / 2)).prod
-    (((PMF.uniformOfFintype (Fin k → Bool)).toMeasure).prod (bern (1 / 2 - ε)))
+    ((uniformOn (Set.univ : Set (Fin k → Bool))).prod (bern (1 / 2 - ε)))
 
 /-- The correct arm of batch `u` under `S_θ`, given the advice `e` and the randomness `r`. -/
 def correctArm (θ : Expert k n) (e : Expert k n → Arm k) (r : Bool × (Fin k → Bool) × Bool)
@@ -186,7 +167,7 @@ open MeasureTheory ProbabilityTheory InformationTheory Learning Bandits
 open scoped ENNReal
 namespace Chase2026Tight
 
-/-- **Lemma 4.1** (Chase, Ito, Mehalel 2026; Ito et al. 2024). In the two-batch game (`k = 1`),
+/-- **Lemma 4.1** [CIM26, Lemma 4.1] (from Ito et al. 2024). In the two-batch game (`k = 1`),
 for `0 < ε ≤ 0.1`, every `T` and `n ≥ 1`,
 `KL((1/n) ∑_v P_(1, v)^T ‖ P_0^T) ≤ ((1 + 4 ε²)^T - 1) / n`. The paper assumes `T ≥ 1`; the
 bound also holds for `T = 0`. -/

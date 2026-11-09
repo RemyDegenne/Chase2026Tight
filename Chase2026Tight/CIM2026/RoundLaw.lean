@@ -6,8 +6,8 @@ Authors: Rémy Degenne
 module
 
 public import Chase2026Tight.CIM2026.Setting
-public import Chase2026Tight.Mathlib.MeasureTheory.Measure.WithDensity
-public import Chase2026Tight.Mathlib.Probability.Distributions.Uniform
+public import Chase2026Tight.ForLMLExplore.MeasureTheory.Measure.WithDensity
+public import Chase2026Tight.ForLMLExplore.Probability.Distributions.Uniform
 public import Mathlib.Probability.Kernel.Composition.WithDensity
 
 /-!
@@ -121,7 +121,7 @@ lemma map_lossRandomness_zero_singleton (z c : Bool) :
     ext ⟨z', c', f'⟩
     simp [funext_iff, Fin.forall_fin_one]
   rw [this, lossRandomness, Measure.prod_prod, Measure.prod_prod,
-    PMF.toMeasure_uniformOfFintype_singleton, measure_univ]
+    uniformOn_univ_singleton, measure_univ]
   simp
 
 /-- Under `S_(1, v)`, with `b` the bit of the expert `(1, v)`, the law of the two bits `(z, c)`
@@ -346,7 +346,7 @@ lemma lintegral_pairRatio_of_ne (hε0 : 0 ≤ ε) (hε1 : ε ≤ 1 / 2) {v w : F
     exact pairRatio_add_pairRatio_not hε0 hε1 (b 0 v) (b 0 w)
   have h_two : ∫⁻ b, G b ∂(uniformBits 1 n) + ∫⁻ b, G b ∂(uniformBits 1 n) = 2 := by
     rw [uniformBits]
-    conv_lhs => arg 2; rw [← PMF.lintegral_uniformOfFintype_comp_equiv
+    conv_lhs => arg 2; rw [← lintegral_uniformOn_univ_comp_equiv
       ((flipBit_involutive v).toPerm _) G]
     rw [← lintegral_add_left (measurable_of_countable _)]
     simp_rw [hG, lintegral_const, measure_univ, mul_one]
