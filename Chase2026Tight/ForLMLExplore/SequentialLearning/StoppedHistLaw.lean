@@ -80,13 +80,11 @@ section Decomposition
 
 variable {S : Set (Σ n, Hist 𝓞 𝓐 𝓨 n)}
 
-/-- The hitting time of `S` on the canonical space. -/
-local notation "τS" => hittingAfter (sigmaHistory IT.obs IT.action IT.feedback) S 0
-
 /-- The interaction stops after `m` rounds iff the history of the first `m` rounds is in `S`
 and none of its proper prefixes is. -/
 lemma hittingAfter_sigmaHistory_eq_coe_iff (m : ℕ) (ω : ℕ → Round 𝓞 𝓐 𝓨) :
-    τS ω = m ↔ (⟨m, IT.hist m ω⟩ : Σ n, Hist 𝓞 𝓐 𝓨 n) ∈ S ∧ IT.hist m ω ∈ preStop S m := by
+    hittingAfter (sigmaHistory IT.obs IT.action IT.feedback) S 0 ω = m ↔
+      (⟨m, IT.hist m ω⟩ : Σ n, Hist 𝓞 𝓐 𝓨 n) ∈ S ∧ IT.hist m ω ∈ preStop S m := by
   rw [Nat.cast_withTop, hittingAfter_eq_coe_iff]
   simp only [zero_le, true_and, Set.mem_Ico, preStop, Set.mem_ofPred_eq]
   refine and_congr Iff.rfl ⟨fun h j hj ↦ h j hj, fun h j hj ↦ h j hj⟩
@@ -94,14 +92,17 @@ lemma hittingAfter_sigmaHistory_eq_coe_iff (m : ℕ) (ω : ℕ → Round 𝓞 �
 /-- The interaction lasts at least `L` rounds iff no proper prefix of the history of the first
 `L` rounds is in `S`. -/
 lemma coe_le_hittingAfter_sigmaHistory_iff (L : ℕ) (ω : ℕ → Round 𝓞 𝓐 𝓨) :
-    (L : WithTop ℕ) ≤ τS ω ↔ IT.hist L ω ∈ preStop S L := by
+    (L : WithTop ℕ) ≤ hittingAfter (sigmaHistory IT.obs IT.action IT.feedback) S 0 ω ↔
+      IT.hist L ω ∈ preStop S L := by
   rw [← not_lt, Nat.cast_withTop, hittingAfter_lt_iff]
   simp only [Set.mem_Ico, zero_le, true_and, not_exists, not_and, preStop, Set.mem_ofPred_eq]
   exact ⟨fun h j hj ↦ h j hj, fun h j hj ↦ h j hj⟩
 
 /-- The interaction never stops iff it lasts at least `L` rounds for every `L`. -/
 lemma hittingAfter_sigmaHistory_eq_top_iff (ω : ℕ → Round 𝓞 𝓐 𝓨) :
-    τS ω = ⊤ ↔ ∀ L : ℕ, (L : WithTop ℕ) ≤ τS ω := by
+    hittingAfter (sigmaHistory IT.obs IT.action IT.feedback) S 0 ω = ⊤ ↔
+      ∀ L : ℕ,
+        (L : WithTop ℕ) ≤ hittingAfter (sigmaHistory IT.obs IT.action IT.feedback) S 0 ω := by
   refine ⟨fun h L ↦ by simp [h], fun h ↦ ?_⟩
   by_contra h_ne
   obtain ⟨m, hm⟩ := WithTop.ne_top_iff_exists.mp h_ne
