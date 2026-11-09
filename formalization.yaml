@@ -132,3 +132,56 @@ status:
     `lintegral_fin_nat_prod_eq_prod` no longer needs `backward.isDefEq.respectTransparency`.
   sorry_count: 0
   sorry_in_definitions: 0
+
+alignment:
+  namespace: "Chase2026Tight"
+  note: >-
+    The full source-to-Lean map is the blueprint: each environment of blueprint/src/chapters/*.tex
+    carries a \lean{} tag. Only the headline statements are repeated here: the five numbered results
+    of the paper (Lemmas 3.1, 4.1, 4.2, 5.1 and Theorem 6.1), each the target of a comparator
+    challenge; Table 1 (known bounds) and the conjecture of Section 7 are not results and are not
+    listed. Each has its Literature Links relation, read "paper relation Lean": exactMatch,
+    closeMatch, broadMatch (the Lean statement is more general), narrowMatch (the paper's is) or
+    hasPart; and its entry in notes/paper-errata.md when the paper had to be corrected.
+  statements:
+    - source: "lem:reduction — Lemma 3.1, reduction from SBI to the bandit with expert advice"
+      lean: "Chase2026Tight.exists_isGood_expectedRounds_le"
+      module: "Chase2026Tight.CIM2026.Lemma3_1"
+      status: "proved"
+      relation: "narrowMatch"
+      erratum: "E2"
+      note: >-
+        For T⋆ ≥ 1; the paper assumes only T⋆ ≥ 1000 r(T⋆)/ε, and its statement is false for
+        T⋆ = 0, where no good SBI algorithm stops after 0 rounds.
+    - source: "lem:kl_bound — Lemma 4.1, KL bound between the mixture and the product law"
+      lean: "Chase2026Tight.klDiv_mixture_pi_roundLaw_le"
+      module: "Chase2026Tight.CIM2026.Lemma4_1"
+      status: "proved"
+      relation: "broadMatch"
+      note: "For every horizon T, including T = 0, which the paper excludes (it assumes T ≥ 1)."
+    - source: "lem:two_batch — Lemma 4.2, lower bound for the two-batch game"
+      lean: "Chase2026Tight.expectedRounds_ge_of_isGood_one"
+      module: "Chase2026Tight.CIM2026.Lemma4_2"
+      status: "proved"
+      relation: "exactMatch"
+      note: >-
+        The statement is the paper's; its proof is repaired, since the learner of the two-batch
+        game is not passive (E4).
+    - source: "lem:many_batches — Lemma 5.1, lower bound for the general SBI game"
+      lean: "Chase2026Tight.expectedRounds_ge_of_isGood"
+      module: "Chase2026Tight.CIM2026.Lemma5_1"
+      status: "proved"
+      relation: "narrowMatch"
+      note: >-
+        Assumes n ≥ 10, which the paper's statement leaves out (its proof uses Lemma 4.2, which
+        assumes it); for n < 10 the paper's bound is negative, so the excluded case is trivial.
+    - source: "thm:main — Theorem 6.1, the lower bound Ω(√(T K log(N/K))) on the pseudo-regret"
+      lean: "Chase2026Tight.exists_pseudoRegret_ge"
+      module: "Chase2026Tight.CIM2026.Theorem6_1"
+      status: "proved"
+      relation: "narrowMatch"
+      erratum: "E1"
+      note: >-
+        For K ≥ 3; the paper states it for every positive K, which is false for K = 1, and its
+        proof needs K ≥ 3. The Ω is read with a universal constant c > 0, and the adversary has
+        losses in {0, 1} that do not depend on the arm of the current round.
