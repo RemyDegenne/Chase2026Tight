@@ -45,7 +45,7 @@ lemma sum_sum_inv_mul_inv_mul_ite {n : ℕ} (hn : 1 ≤ n) (b : ℝ) :
   have : (n : ℝ) ≠ 0 := by positivity
   field_simp
 
-/-- **Lemma 4.1** (Chase, Ito, Mehalel 2026; Ito et al. 2024). In the two-batch game (`k = 1`),
+/-- **Lemma 4.1** [CIM26, Lemma 4.1] (from Ito et al. 2024). In the two-batch game (`k = 1`),
 for `0 < ε ≤ 0.1`, every `T` and `n ≥ 1`,
 `KL((1/n) ∑_v P_(1, v)^T ‖ P_0^T) ≤ ((1 + 4 ε²)^T - 1) / n`. The paper assumes `T ≥ 1`; the
 bound also holds for `T = 0`. -/
