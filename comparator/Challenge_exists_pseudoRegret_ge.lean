@@ -194,7 +194,7 @@ open MeasureTheory ProbabilityTheory Learning Bandits Real
 universe u v w
 namespace Chase2026Tight
 
-/-- **Theorem 6.1** (Chase, Ito, Mehalel 2026). There is a universal constant `c > 0` such that
+/-- **Theorem 6.1** [CIM26, Theorem 6.1]. There is a universal constant `c > 0` such that
 for all numbers of arms `K ≥ 3` and experts `N ≥ 2K`, every horizon `T ≥ K ln(N / K)` and every
 learner for the bandit with expert advice, there is an adaptive adversary (whose losses do not
 depend on the arm pulled in the current round) with losses in `{0, 1}`

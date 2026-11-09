@@ -339,7 +339,7 @@ open scoped ENNReal
 universe u
 namespace Chase2026Tight
 
-/-- **Lemma 5.1** (lower bound for the general SBI game, Chase, Ito, Mehalel 2026). For
+/-- **Lemma 5.1** [CIM26, Lemma 5.1] (lower bound for the general SBI game). For
 `0 < ε ≤ 0.1` and `n ≥ 10`, every good SBI algorithm satisfies
 `T(A', S_0) ≥ k ln(n / 10) / (20 ε²)`. -/
 theorem expectedRounds_ge_of_isGood {k n : ℕ} (hn : 10 ≤ n) {ε : ℝ} (hε : ε ∈ Set.Ioc 0 0.1)
