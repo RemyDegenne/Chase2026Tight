@@ -5,7 +5,7 @@ Authors: Rémy Degenne
 -/
 module
 
-public import Chase2026Tight.LeanMachineLearning.SequentialLearning.StoppedHistLaw
+public import Chase2026Tight.ForLMLExplore.SequentialLearning.StoppedHistLaw
 
 /-!
 # Mixture representations of the laws of histories in countable settings

@@ -8,8 +8,8 @@ module
 public import Chase2026Tight.CIM2026.FinEmbedding
 public import Chase2026Tight.CIM2026.LowerBound
 public import Chase2026Tight.CIM2026.Reduction
-public import Chase2026Tight.LeanMachineLearning.Online.Bandit.ExpertAdviceLaw
-public import Chase2026Tight.LeanMachineLearning.SequentialLearning.ExistsRun
+public import Chase2026Tight.ForLMLExplore.Bandits.ExpertAdviceLaw
+public import Chase2026Tight.ForLMLExplore.SequentialLearning.ExistsRun
 
 /-!
 # Theorem 6.1: the tight lower bound for non-stochastic bandits with expert advice

@@ -74,7 +74,7 @@ end Bandits
 namespace Chase2026Tight
 end Chase2026Tight
 
--- ═══ Chase2026Tight.Mathlib.Analysis.Convex.Simplex ═══
+-- ═══ Chase2026Tight.ForLMLExplore.Analysis.Convex.Simplex ═══
 @[expose] public section
 open MeasureTheory
 namespace Learning
@@ -416,7 +416,7 @@ end Comap
 end Learning
 end
 
--- ═══ Chase2026Tight.LeanMachineLearning.SequentialLearning.PartialFeedback ═══
+-- ═══ Chase2026Tight.ForLMLExplore.SequentialLearning.PartialFeedback ═══
 @[expose] public section
 open MeasureTheory ProbabilityTheory
 namespace Learning
@@ -474,7 +474,7 @@ noncomputable def IdentAlg.comapPartialFeedback (A : IdentAlg 𝓞 𝓐 𝓦 �
 end Learning
 end
 
--- ═══ Chase2026Tight.LeanMachineLearning.Online.Bandit.Adversarial ═══
+-- ═══ Chase2026Tight.ForLMLExplore.Bandits.Adversarial ═══
 @[expose] public section
 open MeasureTheory ProbabilityTheory Finset Learning
 namespace Bandits
@@ -511,7 +511,7 @@ noncomputable def IdentAlg.comapBanditFeedback (A : IdentAlg 𝓞 α 𝓨 𝓩')
 end Learning
 end
 
--- ═══ Chase2026Tight.LeanMachineLearning.Online.Bandit.ExpertAdvice ═══
+-- ═══ Chase2026Tight.ForLMLExplore.Bandits.ExpertAdvice ═══
 @[expose] public section
 open MeasureTheory ProbabilityTheory Finset Learning
 namespace Bandits

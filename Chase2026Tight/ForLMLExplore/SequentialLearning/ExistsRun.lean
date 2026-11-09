@@ -5,7 +5,7 @@ Authors: Rémy Degenne
 -/
 module
 
-public import Chase2026Tight.Mathlib.Probability.HasCondDistrib
+public import Chase2026Tight.ForLMLExplore.Probability.HasCondDistrib
 public import LeanMachineLearning.SequentialLearning.Comap
 public import LeanMachineLearning.SequentialLearning.IdentificationAlg
 

@@ -6,7 +6,7 @@ Authors: Rémy Degenne
 module
 
 public import LeanMachineLearning.SequentialLearning.IdentificationAlg
-public import Chase2026Tight.LeanMachineLearning.SequentialLearning.FactorsThrough
+public import Chase2026Tight.ForLMLExplore.SequentialLearning.FactorsThrough
 
 /-!
 # Partial feedback: algorithms observing a function of each round

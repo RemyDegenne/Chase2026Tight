@@ -5,9 +5,9 @@ Authors: Rémy Degenne
 -/
 module
 
-public import Chase2026Tight.LeanMachineLearning.SequentialLearning.PartialFeedback
-public import Chase2026Tight.Mathlib.Probability.HasCondDistrib
-public import Chase2026Tight.Mathlib.Probability.Kernel.Composition.MeasureComp
+public import Chase2026Tight.ForLMLExplore.SequentialLearning.PartialFeedback
+public import Chase2026Tight.ForLMLExplore.Probability.HasCondDistrib
+public import Chase2026Tight.ForLMLExplore.Probability.Kernel.Composition.MeasureComp
 
 /-!
 # Transport of runs and of output laws along history maps

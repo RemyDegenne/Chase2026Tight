@@ -5,7 +5,7 @@ Authors: Rémy Degenne
 -/
 module
 
-public import Chase2026Tight.Mathlib.MeasureTheory.Integral.Pi
+public import Chase2026Tight.ForLMLExplore.MeasureTheory.Integral.Pi
 
 /-!
 # Measures with densities: images, finite mixtures and products

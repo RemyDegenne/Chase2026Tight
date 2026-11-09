@@ -23,12 +23,12 @@ are listed in [`formalization.yaml`](formalization.yaml) and are standalone chal
   `FinEmbedding.lean`); the reduction (`PerRoundRegret.lean`, `Reduction.lean`); the KL bound
   (`RoundLaw.lean`); the representation of runs by pull records (`ReducedRun.lean`,
   `RecordTape.lean`, `Records.lean`) and the lower bounds (`StopAtPulls.lean`, `LowerBound.lean`).
-* `Chase2026Tight/LeanMachineLearning/`: material for LML: the protocol of the adversarial bandit
+* `Chase2026Tight/ForLMLExplore/`: material for LML: the protocol of the adversarial bandit
   and of the bandit with expert advice (`Online/Bandit/`), partial feedback and environments that
   ignore the current action (`SequentialLearning/`, from `LMLPapers`), and, new: existence and
   transport of runs, laws of stopped histories, mixtures of trajectory laws
   (`SequentialLearning/`), the pseudo-regret as a function of the law of a run.
-* `Chase2026Tight/Mathlib/`: material for Mathlib: Pinsker's inequality for events and the KL
+* `Chase2026Tight/ForLMLExplore/`: material for Mathlib: Pinsker's inequality for events and the KL
   divergence of a finite mixture (`InformationTheory/KullbackLeibler/`), products of measures with
   densities, products of integrals, conditional distributions, hitting times.
 * `blueprint/src/`: the blueprint (Part I follows the paper, Part II the prerequisites);

@@ -5,7 +5,7 @@ Authors: Rémy Degenne
 -/
 module
 
-public import Chase2026Tight.Mathlib.MeasureTheory.Measure.WithDensity
+public import Chase2026Tight.ForLMLExplore.MeasureTheory.Measure.WithDensity
 public import Mathlib.InformationTheory.KullbackLeibler.Basic
 
 /-!

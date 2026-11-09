@@ -8,8 +8,8 @@ module
 public import Chase2026Tight.CIM2026.Records
 public import Chase2026Tight.CIM2026.Lemma4_1
 public import Chase2026Tight.CIM2026.StopAtPulls
-public import Chase2026Tight.Mathlib.InformationTheory.KullbackLeibler.Pinsker
-public import Chase2026Tight.Mathlib.Topology.Algebra.InfiniteSum.ENNReal
+public import Chase2026Tight.ForLMLExplore.InformationTheory.KullbackLeibler.Pinsker
+public import Chase2026Tight.ForLMLExplore.Topology.Algebra.InfiniteSum.ENNReal
 
 /-!
 # Lower bounds on the number of rounds of good SBI algorithms

@@ -6,7 +6,7 @@ Authors: Rémy Degenne
 module
 
 public import Chase2026Tight.CIM2026.PerRoundRegret
-public import Chase2026Tight.LeanMachineLearning.SequentialLearning.ExistsRun
+public import Chase2026Tight.ForLMLExplore.SequentialLearning.ExistsRun
 
 /-!
 # Reduction from special batch identification to the bandit with expert advice

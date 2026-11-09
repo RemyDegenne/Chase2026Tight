@@ -5,7 +5,7 @@ Authors: Rémy Degenne
 -/
 module
 
-public import Chase2026Tight.LeanMachineLearning.Online.Bandit.ExpertAdvice
+public import Chase2026Tight.ForLMLExplore.Bandits.ExpertAdvice
 
 /-!
 # The pseudo-regret depends only on the learner and the adversary

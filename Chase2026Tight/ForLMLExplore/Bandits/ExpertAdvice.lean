@@ -5,8 +5,8 @@ Authors: Rémy Degenne
 -/
 module
 
-public import Chase2026Tight.Mathlib.Analysis.Convex.Simplex
-public import Chase2026Tight.LeanMachineLearning.Online.Bandit.Adversarial
+public import Chase2026Tight.ForLMLExplore.Analysis.Convex.Simplex
+public import Chase2026Tight.ForLMLExplore.Bandits.Adversarial
 
 /-!
 # Bandits with expert advice
@@ -21,12 +21,12 @@ and the losses of a round may depend on the past rounds.
 
 *Deterministic advice*, in which each expert names an arm `e_t j : α`, is the special case of the
 Dirac advice vectors `diracAdvice e` (`expertLoss_diracAdvice`), and the `K`-armed adversarial
-bandit of `Online/Bandit/Adversarial.lean` is the case of the experts `α` each always advising
+bandit of `Bandits/Adversarial.lean` is the case of the experts `α` each always advising
 its own arm (`pseudoRegret_eq_expertPseudoRegret`).
 
 ## Modelling
 
-A round is a `Round 𝓞 α (α → ℝ)` (`Online/Bandit/Adversarial.lean`) with the advice as
+A round is a `Round 𝓞 α (α → ℝ)` (`Bandits/Adversarial.lean`) with the advice as
 observation: `𝓞 = Advice ι α` for advice vectors, `𝓞 = ι → α` for deterministic advice.
 
 * A learner is an `Algorithm 𝓞 α ℝ`, seeing the advice of the current round and, of each past
@@ -35,7 +35,7 @@ observation: `𝓞 = Advice ι α` for advice vectors, `𝓞 = ι → α` for de
   through LML's `Algorithm.comapObs` along `diracAdvice` (`measurable_diracAdvice`).
 * An adversary is an environment `Environment 𝓞 α (α → ℝ)` whose feedback ignores the action of the
   current round (`Environment.FeedbackIgnoresAction`); its advice lies in a set `s` if `env.ObsIn s`
-  (`SequentialLearning/ObliviousEnv.lean`), its losses in `[0, 1]` if
+  (`SequentialLearning/Environments/ObliviousEnv.lean`), its losses in `[0, 1]` if
   `env.FeedbackIn (Set.Icc 0 1)`.
 
 ## Main definitions

@@ -5,7 +5,7 @@ Authors: Rémy Degenne
 -/
 module
 
-public import Chase2026Tight.Mathlib.Analysis.Convex.Simplex
+public import Chase2026Tight.ForLMLExplore.Analysis.Convex.Simplex
 public import LeanMachineLearning.ForMathlib.Analysis.Convex.Subgradient.Deriv
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Analysis.Calculus.Gradient.Basic

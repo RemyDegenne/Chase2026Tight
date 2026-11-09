@@ -5,7 +5,7 @@ Authors: Rémy Degenne
 -/
 module
 
-public import Chase2026Tight.LeanMachineLearning.Online.Bandit.ExpertAdvice
+public import Chase2026Tight.ForLMLExplore.Bandits.ExpertAdvice
 public import Mathlib.Probability.Distributions.Bernoulli
 public import Mathlib.Probability.UniformOn
 public import Mathlib.Probability.Kernel.Composition.MeasureCompProd

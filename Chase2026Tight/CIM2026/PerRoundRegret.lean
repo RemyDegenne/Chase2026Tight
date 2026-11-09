@@ -6,7 +6,7 @@ Authors: Rémy Degenne
 module
 
 public import Chase2026Tight.CIM2026.FinEmbedding
-public import Chase2026Tight.Mathlib.Probability.Distributions.Uniform
+public import Chase2026Tight.ForLMLExplore.Probability.Distributions.Uniform
 public import Mathlib.MeasureTheory.Integral.Prod
 public import Mathlib.Probability.Kernel.Composition.IntegralCompProd
 

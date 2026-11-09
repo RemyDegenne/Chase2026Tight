@@ -6,10 +6,10 @@ Authors: Rémy Degenne
 module
 
 public import Chase2026Tight.CIM2026.Embedding
-public import Chase2026Tight.LeanMachineLearning.Online.Bandit.Adversarial
-public import Chase2026Tight.LeanMachineLearning.SequentialLearning.IdentificationAlg
-public import Chase2026Tight.Mathlib.Order.WithBot
-public import Chase2026Tight.Mathlib.Probability.Process.HittingTime
+public import Chase2026Tight.ForLMLExplore.Bandits.Adversarial
+public import Chase2026Tight.ForLMLExplore.Identification.IdentificationAlg
+public import Chase2026Tight.ForLMLExplore.Order.WithBot
+public import Chase2026Tight.ForLMLExplore.Probability.Process.HittingTime
 
 /-!
 # Stopping an SBI algorithm at its `M`-th pull of a batch

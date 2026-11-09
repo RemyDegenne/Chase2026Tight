@@ -6,8 +6,8 @@ Authors: Rémy Degenne
 module
 
 public import Chase2026Tight.CIM2026.Setting
-public import Chase2026Tight.Mathlib.MeasureTheory.Measure.WithDensity
-public import Chase2026Tight.Mathlib.Probability.Distributions.Uniform
+public import Chase2026Tight.ForLMLExplore.MeasureTheory.Measure.WithDensity
+public import Chase2026Tight.ForLMLExplore.Probability.Distributions.Uniform
 public import Mathlib.Probability.Kernel.Composition.WithDensity
 
 /-!

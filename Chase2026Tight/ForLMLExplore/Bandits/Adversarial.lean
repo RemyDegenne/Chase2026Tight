@@ -5,10 +5,10 @@ Authors: Rémy Degenne
 -/
 module
 
-public import Chase2026Tight.Mathlib.MeasureTheory.MeasurableSpace.Constructions
-public import Chase2026Tight.LeanMachineLearning.Online.Convex.Regret
-public import Chase2026Tight.LeanMachineLearning.SequentialLearning.ObliviousEnv
-public import Chase2026Tight.LeanMachineLearning.SequentialLearning.PartialFeedback
+public import Chase2026Tight.ForLMLExplore.MeasureTheory.MeasurableSpace.Constructions
+public import Chase2026Tight.ForLMLExplore.OnlineLearning.Regret
+public import Chase2026Tight.ForLMLExplore.SequentialLearning.Environments.ObliviousEnv
+public import Chase2026Tight.ForLMLExplore.SequentialLearning.PartialFeedback
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 
 /-!
@@ -23,13 +23,13 @@ pulled in that round.
 ## Modelling
 
 A round is a `Round 𝓞 α (α → ℝ)`: an observation (`Unit` for the `K`-armed bandit, the advice
-of the experts for the bandit with expert advice of `Online/Bandit/ExpertAdvice.lean`), the arm
+of the experts for the bandit with expert advice of `Bandits/ExpertAdvice.lean`), the arm
 pulled as action and the loss vector as feedback.
 
 * An adversary is an `Environment 𝓞 α (α → ℝ)` whose feedback kernels ignore the current action
-  (`Environment.FeedbackIgnoresAction` of `SequentialLearning/ObliviousEnv.lean`). Its losses
-  lie in `[0, 1]` if `env.FeedbackIn (Set.Icc 0 1)` (with Mathlib's order on `α → ℝ`), and in a
-  set `s` if `env.FeedbackIn (Set.univ.pi fun _ ↦ s)`. The oblivious adversaries are the
+  (`Environment.FeedbackIgnoresAction` of `SequentialLearning/Environments/ObliviousEnv.lean`).
+  Its losses lie in `[0, 1]` if `env.FeedbackIn (Set.Icc 0 1)` (with Mathlib's order on `α → ℝ`),
+  and in a set `s` if `env.FeedbackIn (Set.univ.pi fun _ ↦ s)`. The oblivious adversaries are the
   environments `Environment.ofSeq ℓ` (committed loss sequence) and `Environment.const` (stochastic
   losses).
 * A learner is an algorithm with real feedback, `alg : Algorithm 𝓞 α ℝ`: it sees the loss of the
@@ -47,7 +47,7 @@ pulled as action and the loss vector as feedback.
   `IdentAlg.comapBanditFeedback`: learners with bandit feedback run against loss vectors;
 * `pseudoRegret P A Y T = max_i E[∑_{t < T} (Y t (A t) - Y t i)]`: the pseudo-regret after `T`
   rounds of a run with arms `A` and loss vectors `Y`, the largest expected regret `ocoRegret`
-  (`Online/Convex/Regret.lean`) of the run against a fixed arm;
+  (`OnlineLearning/Regret.lean`) of the run against a fixed arm;
 * `IsSelfBounding R P I Δ C T`: the *adversarial regime with a `(Δ, C, T)` self-bounding
   constraint* (Zimmert, Seldin 2021) for a run whose regret is `R` and whose sequence of chosen
   indices (arms, or experts) is `I`: `R ≥ E[∑_{t < T} Δ (I t)] - C`. This covers the stochastic
@@ -68,7 +68,7 @@ pulled as action and the loss vector as feedback.
   against the best arm in hindsight.
 
 The `K`-armed bandit is also the special case of the bandit with expert advice in which the
-experts are the arms (`pseudoRegret_eq_expertPseudoRegret`, `Online/Bandit/ExpertAdvice.lean`)
+experts are the arms (`pseudoRegret_eq_expertPseudoRegret`, `Bandits/ExpertAdvice.lean`)
 and of the adversarial linear bandit with the basis vectors as actions
 (`pseudoRegret_eq_iSup_integral_linRegret`, `Online/Bandit/AdversarialLinear.lean`).
 -/

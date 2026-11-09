@@ -6,7 +6,7 @@ Authors: Rémy Degenne
 module
 
 public import Chase2026Tight.CIM2026.RoundLaw
-public import Chase2026Tight.Mathlib.InformationTheory.KullbackLeibler.Mixture
+public import Chase2026Tight.ForLMLExplore.InformationTheory.KullbackLeibler.Mixture
 
 /-!
 # Lemma 4.1: KL bound between the mixture and the null in the two-batch game

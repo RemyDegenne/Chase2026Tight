@@ -9,7 +9,7 @@ Interface files (statements fixed; their owner replaces the `sorry`):
 | File | Declarations | Owner |
 |---|---|---|
 | `Chase2026Tight/CIM2026/Embedding.lean` | `liftAdvice`, `reduceAdvice`, `strategyOn`, `IsGoodOn`, `pullCount`, `strategyOn_id`, `isGoodOn_id`, `strategyOn_feedbackIgnoresAction` | coordinator (done, no `sorry`) |
-| `Chase2026Tight/Mathlib/InformationTheory/KullbackLeibler/Pinsker.lean` | `ofReal_two_mul_sq_measureReal_sub_le_klDiv` | I |
+| `Chase2026Tight/ForLMLExplore/InformationTheory/KullbackLeibler/Pinsker.lean` | `ofReal_two_mul_sq_measureReal_sub_le_klDiv` | I |
 | `Chase2026Tight/CIM2026/Lemma4_1.lean` (frozen) | `klDiv_mixture_pi_roundLaw_le` | K |
 | `Chase2026Tight/CIM2026/Reduction.lean` | `exists_isGoodOn_lintegral_stoppingTime_le` | L |
 | `Chase2026Tight/CIM2026/Lemma3_1.lean` (frozen) | `exists_isGood_expectedRounds_le` | L |
@@ -36,17 +36,14 @@ Theorem 6.1 (`α = Fin K`, `ι = Fin N`).
 * **Never change** the statements of the headline theorems in `Chase2026Tight/CIM2026/` (frozen by
   the comparator challenges), the definitions in `Setting.lean` and `Embedding.lean`, the
   definitions and statements of the library files from LMLPapers
-  (`Chase2026Tight/LeanMachineLearning/`, `Chase2026Tight/Mathlib/Analysis/`,
-  `Chase2026Tight/Mathlib/MeasureTheory/`), nor the statements of the interface lemmas above. You
-  replace the `sorry` of the interfaces you own; for anything else, add new files (you may add
-  lemmas to `Chase2026Tight/LeanMachineLearning/SequentialLearning/ObliviousEnv.lean` and
+  (`Chase2026Tight/ForLMLExplore/`), nor the statements of the interface lemmas above. You replace the `sorry` of the interfaces you own; for anything else, add new files (you may add
+  lemmas to `Chase2026Tight/ForLMLExplore/SequentialLearning/Environments/ObliviousEnv.lean` and
   `PartialFeedback.lean` if the brief says so). If an interface statement looks false or
   unprovable, stop and report instead of changing it.
 * Prove the general statement and derive the specialization; drop hypotheses the proof does not
-  use from *new* lemmas. New library-shaped material goes to `Chase2026Tight/Mathlib/` (Mathlib
-  path, namespaces `MeasureTheory`/`ProbabilityTheory`/`InformationTheory`) or
-  `Chase2026Tight/LeanMachineLearning/` (LML path, namespace `Learning`); paper-specific material
-  to `Chase2026Tight/CIM2026/` (namespace `Chase2026Tight`).
+  use from *new* lemmas. New library-shaped material goes to `Chase2026Tight/ForLMLExplore/`
+  (Mathlib path, namespaces `MeasureTheory`/`ProbabilityTheory`/`InformationTheory`, or LML path,
+  namespace `Learning`); paper-specific material to `Chase2026Tight/CIM2026/` (namespace `Chase2026Tight`).
 * Only edit your own files and, in the blueprint, the environments of your package. Re-read a
   blueprint chapter right before editing it (other packages edit other environments of the same
   chapters). After adding a Lean file run `lake exe mk_all --lib Chase2026Tight` (concurrent runs
@@ -76,7 +73,7 @@ divergence between two laws on `Bool` in closed form, then `kl(p, q) ≥ 2 (p - 
 
 Prove the frozen `klDiv_mixture_pi_roundLaw_le` (`Lemma4_1.lean`). Route (blueprint
 `two_batch.tex`, `prereq_information.tex`): (1) a Mathlib-shaped bound on the divergence of a
-finite mixture (`Chase2026Tight/Mathlib/InformationTheory/KullbackLeibler/Mixture.lean`):
+finite mixture (`Chase2026Tight/ForLMLExplore/InformationTheory/KullbackLeibler/Mixture.lean`):
 `KL(∑ w_i P_i ‖ Q) ≤ ∑_i w_i log(∑_j w_j ∫ dP_j/dQ dP_i)` for `P_i ≪ Q` (Jensen for the concave
 `log`; a uniform-weights version is enough if simpler); (2) products of measures with densities
 (`Measure.pi` of `withDensity`, check Mathlib first); (3) `roundLaw ε (Expert.mk 0 v) =
@@ -120,7 +117,7 @@ with independent uniform variables, finite action and output spaces; prove the c
 processes form an `IsAlgEnvSeq` and use LML's `isAlgEnvSeq_unique` / `IsRun.hasLaw_output`), or a
 kernel-level computation of `stoppedHistMeasure` / `outputMeasure` (Ionescu-Tulcea, LML's
 `trajMeasure`). Put generic material (realization of algorithms, laws of records of
-"state refreshed by the action" environments) in `Chase2026Tight/LeanMachineLearning/` with
+"state refreshed by the action" environments) in `Chase2026Tight/ForLMLExplore/` with
 Mathlib/LML-quality statements, and the paper-specific part in `Chase2026Tight/CIM2026/`. Expect
 this package to be long; report progress precisely if you cannot finish (which sublemmas are
 proved, which are stated with `sorry` and their statements).
