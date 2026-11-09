@@ -39,7 +39,7 @@ sources:
       - "Zachary Chase"
       - "Shinji Ito"
       - "Idan Mehalel"
-    id: "COLT 2026; arXiv:2511.00257"
+    id: "arXiv:2511.00257v1 (COLT 2026)"
     type: "conference-paper"
     location: "Lemmas 3.1, 4.1, 4.2, 5.1 and Theorem 6.1; see status.scope"
     relationship: "formalizes"
@@ -53,7 +53,8 @@ sources:
       replaces the paper's passivity and simulation arguments) and closes a gap of the proof of
       the main theorem; the blueprint is a derived artifact of this project, not an independent
       source. The statements started from the statement-only formalization of the paper in
-      `LMLPapers` (COLT2026/Chase2026Tight). The formalizer is not an author of the paper.
+      `LMLPapers` (COLT2026/Chase2026Tight). The formalizer is not an author of the paper. The
+      errors found in the paper, with their corrections, are in `notes/paper-errata.md`.
 
 related_formalizations: []   # no earlier or parallel formalization with proofs is known
 

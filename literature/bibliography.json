@@ -1,0 +1,36 @@
+{
+  "CIM26": {
+    "uri": "https://arxiv.org/abs/2511.00257",
+    "identifiers": {
+      "arxiv": "2511.00257"
+    },
+    "citation": {
+      "id": "CIM26",
+      "type": "paper-conference",
+      "title": "A Tight Lower Bound for Non-stochastic Multi-armed Bandits with Expert Advice",
+      "author": [
+        {
+          "family": "Chase",
+          "given": "Zachary"
+        },
+        {
+          "family": "Ito",
+          "given": "Shinji"
+        },
+        {
+          "family": "Mehalel",
+          "given": "Idan"
+        }
+      ],
+      "container-title": "Proceedings of the 39th Conference on Learning Theory (COLT)",
+      "issued": {
+        "date-parts": [
+          [
+            2026
+          ]
+        ]
+      }
+    },
+    "version": "v1"
+  }
+}
