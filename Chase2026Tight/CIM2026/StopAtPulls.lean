@@ -77,7 +77,7 @@ lemma measurable_pullCount (σ : α → Arm k) (b : Batch k) (m : ℕ) :
 /-- The number of pulls of a batch in a history of variable length is measurable. -/
 lemma measurable_sigma_pullCount (σ : α → Arm k) (b : Batch k) :
     Measurable (fun h : Σ m, Hist 𝓞 α 𝓨 m ↦ pullCount σ b h.2) :=
-  measurable_sigma_of_measurable_comp_mk fun m ↦ measurable_pullCount σ b m
+  measurable_sigma fun m ↦ measurable_pullCount σ b m
 
 /-- The histories of variable length with fewer than `M` pulls of batch `b` form a measurable
 set. -/
@@ -190,7 +190,8 @@ lemma stoppedHist_comapBanditFeedback_stopAtPulls_eq
       (by simp [hτ])
     have hi : (stopAtPulls σ u M A).comapBanditFeedback.stoppedHist O X Y ω =
         sigmaHistory O X Y i ω := by
-      simp [IdentAlg.stoppedHist_def, stoppedValue, hτ, WithTop.untopA]
+      rw [IdentAlg.stoppedHist_def, stoppedValue, hτ]
+      rfl
     rw [stopSet_comapBanditFeedback_stopAtPulls] at hmem
     rcases hmem with hmem | hmem
     · rw [hi] at hmem

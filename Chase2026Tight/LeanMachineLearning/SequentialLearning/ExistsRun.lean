@@ -55,7 +55,7 @@ variable {𝓞 𝓐 𝓨 𝓓 Ω Ω' : Type*} {m𝓞 : MeasurableSpace 𝓞} {m�
 
 /-- An algorithm-environment sequence composed with a measure-preserving map is an
 algorithm-environment sequence. -/
-lemma IsAlgEnvSeq.comp_measurePreserving [IsFiniteMeasure P] [IsFiniteMeasure P']
+lemma IsAlgEnvSeq.comp_measurePreserving
     (h : IsAlgEnvSeq O X Y alg env P) (hf : MeasurePreserving f P' P) :
     IsAlgEnvSeq (fun n ↦ O n ∘ f) (fun n ↦ X n ∘ f) (fun n ↦ Y n ∘ f) alg env P' where
   measurable_obs n := (h.measurable_obs n).comp hf.measurable
@@ -67,8 +67,7 @@ lemma IsAlgEnvSeq.comp_measurePreserving [IsFiniteMeasure P] [IsFiniteMeasure P'
 
 /-- A run of an identification algorithm composed with a measure-preserving map is a run. -/
 lemma IdentAlg.IsRun.comp_measurePreserving {A : IdentAlg 𝓞 𝓐 𝓨 𝓓} {out : Ω → 𝓓}
-    [IsFiniteMeasure P] [IsFiniteMeasure P'] (h : A.IsRun env O X Y out P)
-    (hf : MeasurePreserving f P' P) :
+    (h : A.IsRun env O X Y out P) (hf : MeasurePreserving f P' P) :
     A.IsRun env (fun n ↦ O n ∘ f) (fun n ↦ X n ∘ f) (fun n ↦ Y n ∘ f) (out ∘ f) P' where
   isAlgEnvSeq := h.isAlgEnvSeq.comp_measurePreserving hf
   hasCondDistrib_output := h.hasCondDistrib_output.comp_measurePreserving hf

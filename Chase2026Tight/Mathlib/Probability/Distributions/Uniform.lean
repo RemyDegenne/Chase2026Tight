@@ -5,20 +5,22 @@ Authors: Rémy Degenne
 -/
 module
 
-public import Mathlib.Probability.Distributions.Uniform
+public import Mathlib.Probability.UniformOn
 
 /-!
 # The uniform law on a finite type: singletons, permutations, coordinates
 
+The uniform law on a finite type `α` is `uniformOn Set.univ`.
+
 ## Main statements
 
-* `PMF.toMeasure_uniformOfFintype_singleton`: the uniform law gives mass `1 / card α` to every
+* `ProbabilityTheory.uniformOn_univ_singleton`: the uniform law gives mass `1 / card α` to every
   point.
-* `PMF.lintegral_uniformOfFintype_comp_equiv`: the uniform law is invariant under permutations:
-  `∫ G ∘ σ = ∫ G` for every permutation `σ`.
-* `PMF.toMeasure_uniformOfFintype_eval_eq`: under the uniform law on a finite type of functions
+* `ProbabilityTheory.lintegral_uniformOn_univ_comp_equiv`: the uniform law is invariant under
+  permutations: `∫ G ∘ σ = ∫ G` for every permutation `σ`.
+* `ProbabilityTheory.uniformOn_univ_eval_eq`: under the uniform law on a finite type of functions
   `ι → β`, every coordinate is uniform.
-* `PMF.toMeasure_uniformOfFintype_singleton_eq_mul`: the probability of a point `g` is the
+* `ProbabilityTheory.uniformOn_univ_singleton_eq_mul`: the probability of a point `g` is the
   probability that the coordinates other than `i` agree with `g`, divided by `card β`.
 -/
 
@@ -27,33 +29,43 @@ public import Mathlib.Probability.Distributions.Uniform
 open MeasureTheory
 open scoped ENNReal
 
-namespace PMF
+namespace ProbabilityTheory
 
 section Singleton
 
-variable {α : Type*} [Fintype α] [Nonempty α] [MeasurableSpace α] [MeasurableSingletonClass α]
+variable {α : Type*} [Fintype α] [MeasurableSpace α] [MeasurableSingletonClass α]
+
+/-- The uniform law on a finite type gives to a set the proportion of the points it contains. -/
+lemma uniformOn_univ_apply_eq_card_div (s : Set α) [Fintype s] :
+    uniformOn (Set.univ : Set α) s = Fintype.card s / Fintype.card α := by
+  rw [uniformOn_univ, Measure.count_apply (Set.toFinite s).measurableSet,
+    Set.encard_eq_coe_toFinset_card, Set.toFinset_card]
+  rfl
 
 /-- The uniform law on a finite type gives mass `1 / card α` to every point. -/
-lemma toMeasure_uniformOfFintype_singleton (a : α) :
-    (uniformOfFintype α).toMeasure {a} = (Fintype.card α : ℝ≥0∞)⁻¹ := by
-  rw [toMeasure_apply_singleton _ _ (measurableSet_singleton _), uniformOfFintype_apply]
+lemma uniformOn_univ_singleton (a : α) :
+    uniformOn (Set.univ : Set α) {a} = (Fintype.card α : ℝ≥0∞)⁻¹ := by
+  rw [uniformOn_univ, Measure.count_singleton, ENNReal.div_eq_inv_mul, mul_one]
 
+omit [Fintype α] in
 /-- The uniform law on a finite type is invariant under permutations. -/
-lemma lintegral_uniformOfFintype_comp_equiv (σ : α ≃ α) (G : α → ℝ≥0∞) :
-    ∫⁻ x, G (σ x) ∂(uniformOfFintype α).toMeasure = ∫⁻ x, G x ∂(uniformOfFintype α).toMeasure := by
-  simp_rw [lintegral_fintype, toMeasure_uniformOfFintype_singleton]
+lemma lintegral_uniformOn_univ_comp_equiv [Finite α] (σ : α ≃ α) (G : α → ℝ≥0∞) :
+    ∫⁻ x, G (σ x) ∂uniformOn Set.univ = ∫⁻ x, G x ∂uniformOn Set.univ := by
+  have := Fintype.ofFinite α
+  simp_rw [lintegral_fintype, uniformOn_univ_singleton]
   exact Equiv.sum_comp σ (fun x ↦ G x * _)
 
 end Singleton
 
 section Pi
 
-variable {ι β : Type*} [Fintype ι] [DecidableEq ι] [Fintype β] [Nonempty β]
+variable {ι β : Type*} [Finite ι] [Fintype β]
   [MeasurableSpace (ι → β)] [MeasurableSingletonClass (ι → β)]
 
 /-- The functions with a prescribed value at `i` are in bijection with pairs of a value at `i`
 and a function with a prescribed value at `i`. -/
-private def piEquivProdEval (i : ι) (x : β) : (ι → β) ≃ β × {f : ι → β // f i = x} where
+private def piEquivProdEval [DecidableEq ι] (i : ι) (x : β) :
+    (ι → β) ≃ β × {f : ι → β // f i = x} where
   toFun f := (f i, ⟨Function.update f i x, by simp⟩)
   invFun p := Function.update p.2.1 i p.1
   left_inv f := by simp
@@ -65,7 +77,7 @@ private def piEquivProdEval (i : ι) (x : β) : (ι → β) ≃ β × {f : ι �
       rw [← hg, Function.update_eq_self]
 
 /-- The functions agreeing with `g` outside of `i` are in bijection with their values at `i`. -/
-private def equivUpdateEq (i : ι) (g : ι → β) :
+private def equivUpdateEq [DecidableEq ι] (i : ι) (g : ι → β) :
     {f : ι → β // Function.update f i (g i) = g} ≃ β where
   toFun f := f.1 i
   invFun y := ⟨Function.update g i y, by simp⟩
@@ -79,10 +91,11 @@ private def equivUpdateEq (i : ι) (g : ι → β) :
   right_inv y := by simp
 
 /-- Under the uniform law on `ι → β`, every coordinate is uniform. -/
-lemma toMeasure_uniformOfFintype_eval_eq (i : ι) (x : β) :
-    (uniformOfFintype (ι → β)).toMeasure {f | f i = x} = (Fintype.card β : ℝ≥0∞)⁻¹ := by
+lemma uniformOn_univ_eval_eq (i : ι) (x : β) :
+    uniformOn (Set.univ : Set (ι → β)) {f | f i = x} = (Fintype.card β : ℝ≥0∞)⁻¹ := by
   classical
-  rw [toMeasure_uniformOfFintype_apply _ (Set.toFinite _).measurableSet]
+  have := Fintype.ofFinite ι
+  rw [uniformOn_univ_apply_eq_card_div]
   have h_card : Fintype.card (ι → β) = Fintype.card β * Fintype.card {f : ι → β | f i = x} := by
     rw [Fintype.card_congr (piEquivProdEval i x), Fintype.card_prod]
     rfl
@@ -94,13 +107,13 @@ lemma toMeasure_uniformOfFintype_eval_eq (i : ι) (x : β) :
 
 /-- Under the uniform law on `ι → β`, the probability of a point `g` is the probability that the
 coordinates other than `i` agree with `g`, divided by the number of values of the coordinate `i`. -/
-lemma toMeasure_uniformOfFintype_singleton_eq_mul (i : ι) (g : ι → β) :
-    (uniformOfFintype (ι → β)).toMeasure {g} =
-      (uniformOfFintype (ι → β)).toMeasure {f | Function.update f i (g i) = g} *
+lemma uniformOn_univ_singleton_eq_mul [DecidableEq ι] [Nonempty β] (i : ι) (g : ι → β) :
+    uniformOn (Set.univ : Set (ι → β)) {g} =
+      uniformOn (Set.univ : Set (ι → β)) {f | Function.update f i (g i) = g} *
         (Fintype.card β : ℝ≥0∞)⁻¹ := by
   classical
-  rw [toMeasure_uniformOfFintype_apply _ (Set.toFinite _).measurableSet,
-    toMeasure_uniformOfFintype_apply _ (Set.toFinite _).measurableSet]
+  have := Fintype.ofFinite ι
+  rw [uniformOn_univ_apply_eq_card_div, uniformOn_univ_apply_eq_card_div]
   have h1 : Fintype.card ({g} : Set (ι → β)) = 1 := by simp
   have h2 : Fintype.card {f : ι → β | Function.update f i (g i) = g} = Fintype.card β :=
     Fintype.card_congr (equivUpdateEq i g)
@@ -109,4 +122,4 @@ lemma toMeasure_uniformOfFintype_singleton_eq_mul (i : ι) (g : ι → β) :
 
 end Pi
 
-end PMF
+end ProbabilityTheory

@@ -43,7 +43,7 @@ lemma finsetSum_smul_withDensity {ι : Type*} (s : Finset ι) {f : ι → α →
     (hf : ∀ i ∈ s, Measurable (f i)) (w : ι → ℝ≥0∞) :
     ∑ i ∈ s, w i • μ.withDensity (f i) = μ.withDensity (fun x ↦ ∑ i ∈ s, w i * f i x) := by
   ext t ht
-  simp only [Measure.coe_finsetSum, Finset.sum_apply, Measure.smul_apply, smul_eq_mul,
+  simp only [FunLike.coe_sum, Finset.sum_apply, smul_apply, smul_eq_mul,
     withDensity_apply _ ht]
   rw [lintegral_finsetSum' _ fun i hi ↦ ((hf i hi).const_mul _).aemeasurable]
   exact Finset.sum_congr rfl fun i hi ↦ (lintegral_const_mul _ (hf i hi)).symm

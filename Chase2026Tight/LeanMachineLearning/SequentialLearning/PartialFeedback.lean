@@ -131,7 +131,7 @@ lemma Algorithm.factorsThrough_comapPartialFeedback (alg : Algorithm 𝓞 𝓐 �
 lemma measurable_sigma_map_id {ι : Type*} {β γ : ι → Type*} [∀ i, MeasurableSpace (β i)]
     [∀ i, MeasurableSpace (γ i)] {G : ∀ i, β i → γ i} (hG : ∀ i, Measurable (G i)) :
     Measurable (Sigma.map id G : (Σ i, β i) → Σ i, γ i) :=
-  measurable_sigma_of_measurable_comp_mk fun i ↦ (measurable_sigma_mk i).comp (hG i)
+  measurable_sigma fun i ↦ (measurable_sigmaMk i).comp (hG i)
 
 /-- The identification algorithm with feedback in `𝓨` obtained from `A` with feedback in `𝓦` by
 transforming the histories: the sampling rule uses the history maps `F n` on pairs (history,

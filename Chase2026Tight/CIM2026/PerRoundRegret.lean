@@ -6,6 +6,7 @@ Authors: Rémy Degenne
 module
 
 public import Chase2026Tight.CIM2026.FinEmbedding
+public import Chase2026Tight.Mathlib.Probability.Distributions.Uniform
 public import Mathlib.MeasureTheory.Integral.Prod
 public import Mathlib.Probability.Kernel.Composition.IntegralCompProd
 
@@ -50,7 +51,7 @@ variable {k n : ℕ}
 
 /-- Under the uniform law on `Fin k → Bool`, the bit `u` is `b` with probability `1/2`. -/
 private lemma uniform_real_eval_eq (u : Fin k) (b : Bool) :
-    ((PMF.uniformOfFintype (Fin k → Bool)).toMeasure).real {c | c u = b} = 1 / 2 := by
+    (uniformOn (Set.univ : Set (Fin k → Bool))).real {c | c u = b} = 1 / 2 := by
   classical
   have h_card : #{c : Fin k → Bool | c u = b} = #{c : Fin k → Bool | c u = !b} := by
     refine Finset.card_nbij' (fun c ↦ Function.update c u (!c u))
@@ -76,7 +77,7 @@ private lemma uniform_real_eval_eq (u : Fin k) (b : Bool) :
   have h_neg : #{c : Fin k → Bool | ¬ c u = b} = #{c : Fin k → Bool | c u = !b} := by
     congr 1; ext c; cases h : c u <;> cases b <;> simp [h]
   rw [h_neg, ← h_card, card_univ] at h_add
-  rw [measureReal_def, PMF.toMeasure_uniformOfFintype_apply _ (MeasurableSet.of_discrete),
+  rw [measureReal_def, uniformOn_univ_apply_eq_card_div,
     Fintype.card_subtype]
   simp only [Set.mem_ofPred_eq]
   rw [← h_add, ENNReal.toReal_div, ENNReal.toReal_natCast, ENNReal.toReal_natCast, Nat.cast_add]
@@ -101,7 +102,7 @@ private lemma integral_lossRandomness_fst (ε : ℝ) (f : Bool → ℝ) :
 /-- The integral against `lossRandomness` of a function of the uniform bits of the batches. -/
 private lemma integral_lossRandomness_snd_fst (ε : ℝ) (f : (Fin k → Bool) → ℝ) :
     ∫ r, f r.2.1 ∂lossRandomness k ε
-      = ∫ c, f c ∂(PMF.uniformOfFintype (Fin k → Bool)).toMeasure := by
+      = ∫ c, f c ∂uniformOn (Set.univ : Set (Fin k → Bool)) := by
   rw [lossRandomness]
   refine (integral_fun_snd (fun q : (Fin k → Bool) × Bool ↦ f q.1)).trans ?_
   rw [probReal_univ, one_smul, integral_fun_fst, probReal_univ, one_smul]

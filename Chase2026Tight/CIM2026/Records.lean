@@ -121,7 +121,7 @@ lemma klDiv_outputMeasure_le_klDiv_pi {𝓓 : Type*} [MeasurableSpace 𝓓]
   have : IsFiniteMeasure ((n : ℝ≥0∞)⁻¹ • ∑ v : Fin n,
       Measure.pi fun _ : Fin M ↦ roundLaw (k := 1) ε (Expert.mk 0 v)) := by
     constructor
-    rw [Measure.smul_apply, Measure.coe_finsetSum, Finset.sum_apply]
+    rw [smul_apply, FunLike.coe_sum, Finset.sum_apply]
     simp only [measure_univ, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
       mul_one, smul_eq_mul]
     rcases Nat.eq_zero_or_pos n with hn | hn

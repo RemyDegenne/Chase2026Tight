@@ -95,7 +95,7 @@ variable {k : ℕ} {𝓞 α : Type*} [MeasurableSpace 𝓞] [MeasurableSpace α]
 /-- The most pulled batch of a history is a measurable function of the history. -/
 lemma measurable_mostPulledBatch_hist {𝓨 : Type*} [MeasurableSpace 𝓨] (σ : α → Arm k) :
     Measurable fun h : (Σ m, Hist 𝓞 α 𝓨 m) ↦ mostPulledBatch σ fun i ↦ (h.2 i).action :=
-  measurable_sigma_of_measurable_comp_mk fun _ ↦ (measurable_mostPulledBatch σ _).comp
+  measurable_sigma fun _ ↦ (measurable_mostPulledBatch σ _).comp
     (measurable_pi_iff.mpr fun i ↦ Round.measurable_action.comp (measurable_pi_apply i))
 
 /-- **The SBI algorithm of a learner** (`def:sbi_of_learner`). It runs the learner `alg` (its
@@ -147,7 +147,7 @@ lemma isRun_sbiOfLearner {env : Environment 𝓞 α (α → ℝ)} {P : Measure �
       = fun ω ↦ ⟨T, history O X Y T ω⟩ := funext stoppedHist_sbiOfLearner
   rw [h_out, h_hist]
   exact hasCondDistrib_comp_self hg
-    ((measurable_sigma_mk T).comp (h.measurable_history T)).aemeasurable
+    ((measurable_sigmaMk T).comp (h.measurable_history T)).aemeasurable
 
 end SBI
 
@@ -174,13 +174,16 @@ lemma exists_isGoodOn_lintegral_stoppingTime_le (hσρ : ∀ a, σ (ρ a) = a)
         [IsProbabilityMeasure P] (O : ℕ → Ω → ι → α) (X : ℕ → Ω → α) (Y : ℕ → Ω → α → ℝ)
         (out : Ω → Batch k),
         A'.comapBanditFeedback.IsRun (strategyOn σ ρ τ τ' ε θ) O X Y out P →
-          ∫⁻ ω, (A'.comapBanditFeedback.stoppingTime O X Y ω : ℝ≥0∞) ∂P ≤ T := by
+          ∫⁻ ω, ENat.toENNReal (A'.comapBanditFeedback.stoppingTime O X Y ω) ∂P ≤ T := by
   have hε0 : 0 < ε := hε.1
   have hε1 : ε ≤ 1 / 2 := hε.2.trans (by norm_num)
   refine ⟨sbiOfLearner σ alg T, fun θ ↦ ?_, fun θ Ω _ P _ O X Y out _ ↦ ?_⟩
   swap
-  · simp_rw [stoppingTime_sbiOfLearner]
-    simp
+  · have h_T (ω : Ω) :
+        ENat.toENNReal ((sbiOfLearner σ alg T).comapBanditFeedback.stoppingTime O X Y ω) = T := by
+      rw [stoppingTime_sbiOfLearner]
+      exact ENat.toENNReal_coe T
+    simp [h_T]
   -- a run of the learner on a probability space in `Type u`
   obtain ⟨Ω, _, P, _, O, X, Y, h⟩ :=
     exists_isAlgEnvSeq_of_finite.{u} alg.comapBanditFeedback (strategyOn σ ρ τ τ' ε θ)

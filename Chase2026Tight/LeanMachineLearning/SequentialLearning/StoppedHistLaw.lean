@@ -53,7 +53,7 @@ lemma measurableSet_preStop {S : Set (Σ n, Hist 𝓞 𝓐 𝓨 n)} (hS : Measur
     exact ⟨fun h' m ↦ h' m m.2, fun h' m hm ↦ h' ⟨m, hm⟩⟩
   rw [this]
   refine MeasurableSet.iInter fun m ↦ ?_
-  exact ((measurable_sigma_mk (m : ℕ)).comp (by fun_prop)) hS.compl
+  exact ((measurable_sigmaMk (m : ℕ)).comp (by fun_prop)) hS.compl
 
 namespace IT
 
@@ -139,11 +139,11 @@ lemma map_stoppedHist_eq_of_forall_preStop {P Q : Measure (ℕ → Round 𝓞 �
       (⟨c, fun i ↦ h (Fin.castLE (by omega) i)⟩ : Σ n, Hist 𝓞 𝓐 𝓨 n) ∈ A} with hF
   have hEm : ∀ m, MeasurableSet {h : Hist 𝓞 𝓐 𝓨 m | (⟨m, h⟩ : Σ n, Hist 𝓞 𝓐 𝓨 n) ∈ A ∧
       (⟨m, h⟩ : Σ n, Hist 𝓞 𝓐 𝓨 n) ∈ S ∧ h ∈ preStop S m} := fun m ↦
-    ((measurable_sigma_mk m) hA).inter (((measurable_sigma_mk m) hS).inter
+    ((measurable_sigmaMk m) hA).inter (((measurable_sigmaMk m) hS).inter
       (measurableSet_preStop hS m))
   have hFm : ∀ N, MeasurableSet {h : Hist 𝓞 𝓐 𝓨 (N + c + 1) | h ∈ preStop S (N + c + 1) ∧
       (⟨c, fun i ↦ h (Fin.castLE (by omega) i)⟩ : Σ n, Hist 𝓞 𝓐 𝓨 n) ∈ A} := fun N ↦
-    (measurableSet_preStop hS _).inter (((measurable_sigma_mk c).comp (by fun_prop)) hA)
+    (measurableSet_preStop hS _).inter (((measurable_sigmaMk c).comp (by fun_prop)) hA)
   have hE_meas : ∀ m, MeasurableSet (E m) := fun m ↦ IT.measurable_hist m (hEm m)
   have hF_meas : ∀ N, MeasurableSet (F N) := fun N ↦ IT.measurable_hist _ (hFm N)
   -- `E m` is the event `τ = m` with the stopped history in `A`

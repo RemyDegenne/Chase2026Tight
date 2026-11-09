@@ -141,7 +141,7 @@ lemma lossRandomness_recBit (k' : ℕ) (u' : Fin k') (ε : ℝ) (w : Option (Fin
           Set.univ ×ˢ ({f : Fin k'' → Bool | f u'' = c} ×ˢ Set.univ) := by
         ext r; simp [recBit]
       rw [this, lossRandomness, Measure.prod_prod, Measure.prod_prod,
-        PMF.toMeasure_uniformOfFintype_eval_eq, measure_univ, measure_univ]
+        uniformOn_univ_eval_eq, measure_univ, measure_univ]
       simp
     rw [h, h]
   | some v =>
@@ -170,7 +170,7 @@ lemma initAdvice_bitsOf_eq (β : Fin n → Bool) :
   rw [initAdvice, Measure.map_apply (measurable_of_countable _) (Set.toFinite _).measurableSet]
   have : adviceOf ⁻¹' {e : Expert 1 n → Arm 1 | bitsOf e 0 = β} = {b : Bits 1 n | b 0 = β} := by
     ext b; simp
-  rw [this, uniformBits, PMF.toMeasure_uniformOfFintype_eval_eq]
+  rw [this, uniformBits, uniformOn_univ_eval_eq]
 
 /-- The advice bits of a record are uniform. -/
 lemma recordLaw_fst_eq (ε : ℝ) (w : Option (Fin n)) (β : Fin n → Bool) :
@@ -505,7 +505,7 @@ lemma bitsKernel_singleton_mul (w : Option (Fin n)) {M L : ℕ} (h : Hist (Bits 
   cases L with
   | zero =>
     simp only [tapeConstr_zero, measure_univ, mul_one, Set.univ_inter, recordLaw_fst_eq]
-    exact PMF.toMeasure_uniformOfFintype_singleton_eq_mul u o
+    exact uniformOn_univ_singleton_eq_mul u o
   | succ L =>
     obtain ⟨h, r, rfl⟩ : ∃ h' r, h = Fin.snoc h' r :=
       ⟨Fin.init h, h (Fin.last L), (Fin.snoc_init_self h).symm⟩
@@ -528,7 +528,7 @@ lemma bitsKernel_singleton_mul (w : Option (Fin n)) {M L : ℕ} (h : Hist (Bits 
           rw [Set.mem_ofPred_eq, Set.mem_ofPred_eq, update_eq_iff]
           exact ⟨fun h ↦ h.1, fun h ↦ ⟨h, hP⟩⟩
         simp only [hP, Set.ofPred_true, measure_univ, one_mul, h3]
-        exact PMF.toMeasure_uniformOfFintype_eval_eq u (o u)
+        exact uniformOn_univ_eval_eq u (o u)
       · have h3 : {f : Bits k n | Function.update r.obs u (f u) = o} = ∅ := by
           ext f
           rw [Set.mem_ofPred_eq, update_eq_iff]

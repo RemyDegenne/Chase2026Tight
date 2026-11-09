@@ -85,7 +85,7 @@ lemma pullCount_history_le_pullsBefore {𝓞 𝓨 : Type*} (σ : α → Arm k) (
         refine Finset.sum_congr rfl fun t ht ↦ ?_
         have : (t : ℕ∞) < τ ω := lt_of_lt_of_le (by exact_mod_cast Finset.mem_range.1 ht) hm
         simp [this]
-    _ ≤ pullsBefore σ b X τ ω := ENNReal.sum_le_tsum _
+    _ ≤ pullsBefore σ b X τ ω := sum_le_tsum _
 
 /-- For an injective `f`, at most one term of `∑ u, 1{p ∧ c = f u}` is nonzero. -/
 private lemma sum_ite_and_eq_le {β γ : Type*} [Fintype β] [DecidableEq γ] {f : β → γ}
@@ -107,8 +107,8 @@ omit [MeasurableSpace α] [DiscreteMeasurableSpace α] [Countable α] in
 lemma sum_pullsBefore_le (σ : α → Arm k) (X : ℕ → Ω → α) (τ : Ω → ℕ∞) (ω : Ω) :
     ∑ u : Fin k, pullsBefore σ (some u : Batch k) X τ ω ≤ τ ω := by
   unfold pullsBefore
-  rw [← Summable.tsum_finsetSum fun _ _ ↦ ENNReal.summable, ← ENNReal.tsum_ite_natCast_lt]
-  exact ENNReal.tsum_le_tsum fun t ↦ sum_ite_and_eq_le (f := fun u : Fin k ↦ (some u : Batch k))
+  rw [← Summable.tsum_finsetSum fun _ _ ↦ CompleteLattice.summable, ← ENNReal.tsum_ite_natCast_lt]
+  exact tsum_le_tsum fun t ↦ sum_ite_and_eq_le (f := fun u : Fin k ↦ (some u : Batch k))
     (Option.some_injective _) _ _
 
 end PullsBefore
@@ -199,12 +199,12 @@ lemma ofReal_le_lintegral_pullsBefore (hσρ : ∀ a, σ (ρ a) = a) (hττ' : �
   have hn0 : (n : ℝ≥0∞) ≠ 0 := by exact_mod_cast (by omega : n ≠ 0)
   have hmix_prob : IsProbabilityMeasure mix := by
     constructor
-    simp only [hmix_def, Measure.smul_apply, Measure.coe_finsetSum, Finset.sum_apply,
+    simp only [hmix_def, smul_apply, FunLike.coe_sum, Finset.sum_apply,
       measure_univ, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, mul_one,
       smul_eq_mul]
     exact ENNReal.inv_mul_cancel hn0 (ENNReal.natCast_ne_top n)
   have hmix_true : mix {true} ≤ ENNReal.ofReal 0.05 := by
-    simp only [hmix_def, Measure.smul_apply, Measure.coe_finsetSum, Finset.sum_apply,
+    simp only [hmix_def, smul_apply, FunLike.coe_sum, Finset.sum_apply,
       smul_eq_mul]
     calc (n : ℝ≥0∞)⁻¹ * ∑ v : Fin n, D.outputMeasure (strategyOn σ ρ τ τ' ε (Expert.mk u v)) {true}
         ≤ (n : ℝ≥0∞)⁻¹ * ∑ v : Fin n, ENNReal.ofReal 0.05 := by
@@ -263,7 +263,7 @@ lemma ofReal_le_lintegral_stoppingTime (hσρ : ∀ a, σ (ρ a) = a) (hττ' : 
     {Y : ℕ → Ω → α → ℝ} {out : Ω → Batch k}
     (h : A'.comapBanditFeedback.IsRun (strategyOn σ ρ τ τ' ε Expert.zero) O X Y out P) :
     ENNReal.ofReal (k * Real.log (1 + n / 8) / (8 * ε ^ 2)) ≤
-      ∫⁻ ω, (A'.comapBanditFeedback.stoppingTime O X Y ω : ℝ≥0∞) ∂P := by
+      ∫⁻ ω, ENat.toENNReal (A'.comapBanditFeedback.stoppingTime O X Y ω) ∂P := by
   have hseq := h.isAlgEnvSeq
   calc ENNReal.ofReal (k * Real.log (1 + n / 8) / (8 * ε ^ 2))
       = ∑ _u : Fin k, ENNReal.ofReal (Real.log (1 + n / 8) / (8 * ε ^ 2)) := by
@@ -278,7 +278,7 @@ lemma ofReal_le_lintegral_stoppingTime (hσρ : ∀ a, σ (ρ a) = a) (hττ' : 
           (measurable_pullsBefore σ _ hseq.measurable_action
             (IdentAlg.measurableSet_lt_stoppingTime hseq.measurable_obs hseq.measurable_action
               hseq.measurable_feedback)).aemeasurable).symm
-    _ ≤ ∫⁻ ω, (A'.comapBanditFeedback.stoppingTime O X Y ω : ℝ≥0∞) ∂P :=
+    _ ≤ ∫⁻ ω, ENat.toENNReal (A'.comapBanditFeedback.stoppingTime O X Y ω) ∂P :=
         lintegral_mono fun ω ↦ sum_pullsBefore_le σ X _ ω
 
 /-- `ln(n/10) ≤ ln(1 + n/8)`. -/
